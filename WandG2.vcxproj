@@ -18,6 +18,48 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Characters\Hero\Hero.cpp" />
+    <ClCompile Include="Source\Game.cpp" />
+    <ClCompile Include="Source\GUI\BattleHUD.cpp" />
+    <ClCompile Include="Source\GUI\Button.cpp" />
+    <ClCompile Include="Source\GUI\Icon.cpp" />
+    <ClCompile Include="Source\GUI\Menu.cpp" />
+    <ClCompile Include="Source\GUI\StackMenu.cpp" />
+    <ClCompile Include="Source\GUI\Textbox.cpp" />
+    <ClCompile Include="Source\GUI\Widget.cpp" />
+    <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Objects\Object.cpp" />
+    <ClCompile Include="Source\Objects\Projectile.cpp" />
+    <ClCompile Include="Source\Spells\SpellBase.cpp" />
+    <ClCompile Include="Source\States\StatePlaying.cpp" />
+    <ClCompile Include="Source\Utility\Animation.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Armor\Armor.h" />
+    <ClInclude Include="Source\Characters\Hero\Hero.h" />
+    <ClInclude Include="Source\Game.h" />
+    <ClInclude Include="Source\GUI\BattleHUD.h" />
+    <ClInclude Include="Source\GUI\Button.h" />
+    <ClInclude Include="Source\GUI\Icon.h" />
+    <ClInclude Include="Source\GUI\Menu.h" />
+    <ClInclude Include="Source\GUI\Panel.h" />
+    <ClInclude Include="Source\GUI\StackMenu.h" />
+    <ClInclude Include="Source\GUI\Textbox.h" />
+    <ClInclude Include="Source\GUI\Widget.h" />
+    <ClInclude Include="Source\Objects\Object.h" />
+    <ClInclude Include="Source\Objects\Projectile.h" />
+    <ClInclude Include="Source\ResourceManager\ResourceHolder.h" />
+    <ClInclude Include="Source\ResourceManager\ResourceManager.h" />
+    <ClInclude Include="Source\Spells\Effect.h" />
+    <ClInclude Include="Source\Spells\SpellBase.h" />
+    <ClInclude Include="Source\States\StateBase.h" />
+    <ClInclude Include="Source\States\StatePlaying.h" />
+    <ClInclude Include="Source\Utility\Animation.h" />
+    <ClInclude Include="Source\Utility\ChilliMath.h" />
+    <ClInclude Include="Source\Utility\Vec2.h" />
+    <ClInclude Include="Source\Utility\Vec3.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{EDDBFC22-0379-458D-8386-9D38989ABCAC}</ProjectGuid>
@@ -110,8 +152,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
