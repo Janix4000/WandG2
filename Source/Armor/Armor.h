@@ -7,8 +7,9 @@ class Armor
 public:
 	Armor(float armor = 5.f)
 		:
-		armorModif(armor)
-	{}
+		armorModif(armor, StatType::Armor)
+	{
+	}
 
 
 	const Modifier& getEffects() const

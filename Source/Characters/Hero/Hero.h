@@ -11,6 +11,69 @@ using SpellVector = std::vector<SpellBase>;
 
 class MainHero
 {
+private:
+	class Statistics
+	{
+	public:
+		Statistics()
+		{
+			stats.emplace_back(Stat(StatType::Strength));
+			stats.emplace_back(Stat(StatType::Armor));
+		}
+
+		float getValue(StatType type)const
+		{
+			const auto foundStat = std::find_if(stats.begin(), stats.end(), [&](const auto& stat) {
+				return stat.getType() == type;
+			});
+			if(foundStat != stats.end())
+			return foundStat->getValue();
+			else return -1;
+		}
+
+		void applyMods(const std::vector<Modifier>& mods)
+		{
+			for (const auto& mod : mods)
+			{
+				for (auto& stat : stats)
+				{
+					if (mod.target == stat.getType())
+					{
+						stat.addModifier(mod);
+						break;
+					}
+				}
+			}
+		}
+		void applyModifier(const Modifier& mod)
+		{
+			std::vector<Modifier> mods(1, mod);
+			applyMods(mods);
+		}
+
+		void removeMods(const std::vector<Modifier>& mods)
+		{
+			for (const auto& mod : mods)
+			{
+				for (auto& stat : stats)
+				{
+					if (mod.target == stat.getType())
+					{
+						stat.removeModifier(mod);
+						break;
+					}
+				}
+			}
+		}
+		void removeModifier(const Modifier& mod)
+		{
+			std::vector<Modifier> mods(1, mod);
+			removeMods(mods);
+		}
+		
+	private:
+		std::vector<Stat> stats;
+	};
 public:
 	MainHero();
 	~MainHero();
@@ -24,16 +87,16 @@ public:
 	{
 		if (hasArmor)
 		{
-			armor.removeModifier(head.getEffects());
+			stats.removeModifier(head.getEffects());
 		}
 		head = h;
-		armor.addModifier(head.getEffects());
+		stats.applyModifier(head.getEffects());
 		hasArmor = true;
 	}
 
 	void debugPrintArmor() const
 	{
-		std::cout << "Armor: " << armor.getValue() << "\n";
+		std::cout << "Armor: " << stats.getValue(StatType::Armor) << "\n";
 	}
 
 	void setPosition(sf::Vector2f position)
@@ -45,10 +108,12 @@ public:
 private:
 
 	SpellVector spells;
-	Stat armor;
+	Statistics stats;
+
 
 	Armor head;
 	bool hasArmor = false;
+
 
 	TexturePtr texture;
 	sf::Sprite sprite;

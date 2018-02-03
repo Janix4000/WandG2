@@ -3,6 +3,12 @@
 #include <vector>
 #include <algorithm>
 
+enum class StatType
+{
+	Strength,
+	Armor
+};
+
 class Modifier
 {
 public:
@@ -12,9 +18,11 @@ public:
 		Factor
 	};
 
-	Modifier(float value, Type type = Type::Addon)
+
+	Modifier(float value,StatType statType, Type type = Type::Addon)
 		:
 		value(value),
+		target(statType),
 		type(type)
 	{}
 
@@ -23,26 +31,39 @@ public:
 		return value == rhs.value && type == rhs.type;
 	}
 
+	StatType target;
 	Type type;
 	float value;
 };
 
+using ModifierPtr = std::unique_ptr<Modifier>;
+
+inline ModifierPtr make_modifier(float value, StatType statType, Modifier::Type type = Modifier::Type::Addon)
+{
+	return std::make_unique<Modifier>(value, statType, type);
+}
+
 class Stat
 {
-	std::string name = "";
+	StatType type;
 	float baseValue = 0;
 
-	std::vector<const Modifier*> modifiers;
+	std::vector<Modifier> modifiers;
 
 public:
+	Stat(StatType type)
+		:
+		type(type)
+	{}
+
 	void addModifier(const Modifier& mod)
 	{
-		modifiers.emplace_back(&mod);
+		modifiers.emplace_back(mod);
 	}
 
 	void removeModifier(const Modifier& mod)
 	{
-		auto newEnd = std::remove(modifiers.begin(), modifiers.end(), &mod);
+		auto newEnd = std::remove(modifiers.begin(), modifiers.end(), mod);
 		modifiers.erase(newEnd, modifiers.end());
 	}
 
@@ -58,17 +79,22 @@ public:
 
 		for (const auto& mod : modifiers)
 		{
-			if (mod->type == Modifier::Type::Factor)
+			if (mod.type == Modifier::Type::Factor)
 			{
-				factor *= mod->value;
+				factor *= mod.value;
 			}
 			else
 			{
-				addon += mod->value;
+				addon += mod.value;
 			}
 		}
 
 		return (baseValue + addon) * factor;
+	}
+
+	StatType getType() const
+	{
+		return type;
 	}
 
 	void removeAllModifiers()
@@ -89,14 +115,14 @@ class Effect
 
 public:
 	Effect()
-		:
-		mod(3.f)
-	{}
+	{
+		
+	}
 
 	void endTurn()
 	{
-		mod.value -= 1.f;
-		if (mod.value <= 0.f)
+		mod->value -= 1.f;
+		if (mod->value <= 0.f)
 		{
 			status = Status::Inactive;
 		}
@@ -105,5 +131,5 @@ public:
 
 private:
 	int turnDuration;
-	Modifier mod;
+	ModifierPtr mod;
 };

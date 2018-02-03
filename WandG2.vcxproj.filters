@@ -131,5 +131,8 @@
     <ClInclude Include="Source\Armor\Armor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Items\Item.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

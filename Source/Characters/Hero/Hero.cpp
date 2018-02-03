@@ -9,8 +9,6 @@ MainHero::MainHero()
 
 	texture = (ResourceHolder::get().textures.acquire("man"));
 	sprite.setTexture(*texture);
-
-	armor.addToBaseValue(4.f);
 }
 
 

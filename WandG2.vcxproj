@@ -47,6 +47,7 @@
     <ClInclude Include="Source\GUI\StackMenu.h" />
     <ClInclude Include="Source\GUI\Textbox.h" />
     <ClInclude Include="Source\GUI\Widget.h" />
+    <ClInclude Include="Source\Items\Item.h" />
     <ClInclude Include="Source\Objects\Object.h" />
     <ClInclude Include="Source\Objects\Projectile.h" />
     <ClInclude Include="Source\ResourceManager\ResourceHolder.h" />
