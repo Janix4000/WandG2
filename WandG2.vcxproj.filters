@@ -131,7 +131,10 @@
     <ClInclude Include="Source\Armor\Armor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Items\Item.h">
+    <ClInclude Include="Source\Inventory\Items\Item.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Inventory\Inventory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
