@@ -14,7 +14,8 @@ StatePlaying::StatePlaying(Game& game)
 	StateBase(game),
 	testMenu(game.getWindow()),
 	spellMenuTest({ 300, 300 }, heroTest),
-	anotherHead(10.f)
+	anotherHead(10.f),
+	testItemObj({ 10.f, 10.f })
 {
 	{
 		auto b = gui::make_button();
@@ -54,6 +55,9 @@ StatePlaying::StatePlaying(Game& game)
 	heroTest.addHead(Armor(14));
 	heroTest.debugPrintArmor();
 
+	auto item = std::make_unique<Item>();
+	item->setTexture(ResourceHolder::get().textures.acquire("test_item"));
+	testItemObj.applyItem(std::move(item));
 }
 
 void StatePlaying::handleEvent(sf::Event e)
@@ -64,6 +68,8 @@ void StatePlaying::handleEvent(sf::Event e)
 	}
 
 	spellMenuTest.handleEvent(e, gamePtr->getWindow());
+
+	testItemObj.handleEvent(e, gamePtr->getWindow());
 
 	if (e.type == sf::Event::KeyPressed)
 	{
@@ -80,7 +86,7 @@ void StatePlaying::handleEvent(sf::Event e)
 
 void StatePlaying::handleInput()
 {
-
+	testItemObj.handleInput(gamePtr->getWindow());
 }
 
 void StatePlaying::update(sf::Time deltaTime)
@@ -90,6 +96,8 @@ void StatePlaying::update(sf::Time deltaTime)
 		testMenu.update(deltaTime.asSeconds());
 	}
 	spellMenuTest.update(deltaTime.asSeconds());
+
+	testItemObj.update(deltaTime.asSeconds());
 
 
 	hp -= 0.07f;
@@ -101,12 +109,15 @@ void StatePlaying::fixedUpdate(sf::Time deltaTime)
 
 }
 
-void StatePlaying::render(sf::RenderTarget& renderer)
+void StatePlaying::render(sf::RenderTarget& renderer) const
 {
 	if (!hidden)
 	{
 		testMenu.render(renderer);
 	}
+
+
+	testItemObj.render(renderer);
 
 	spellMenuTest.render(renderer);
 }

@@ -22,7 +22,7 @@ namespace gui
 	{
 	}
 
-	void Icon::render(sf::RenderTarget & renderer)
+	void Icon::render(sf::RenderTarget & renderer) const
 	{
 		renderer.draw(backgroundCircle);
 		renderer.draw(insideCircle);

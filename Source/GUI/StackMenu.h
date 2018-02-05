@@ -27,7 +27,7 @@ class StackMenu
         void addWidget(std::unique_ptr<Widget>);
 
         void handleEvent(sf::Event e, const sf::RenderWindow& window);
-        void render(sf::RenderTarget& renderer);
+        void render(sf::RenderTarget& renderer)const;
 		void update(float dt);
 
     private:

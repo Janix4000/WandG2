@@ -12,7 +12,7 @@ namespace gui
 
 		void handleEvent(sf::Event e, const sf::RenderWindow& window) override;
 
-		void render(sf::RenderTarget& renderer) override;
+		void render(sf::RenderTarget& renderer) const override;
 
 		void setPosition(const sf::Vector2f& pos) override;
 

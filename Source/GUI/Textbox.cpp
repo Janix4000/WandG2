@@ -23,14 +23,9 @@ void TextBox::handleEvent(sf::Event e, const sf::RenderWindow& window)
     handleTextInput (e);
 }
 
-void TextBox::render(sf::RenderTarget& renderer)
+void TextBox::render(sf::RenderTarget& renderer) const
 {
-    if (!isActive) {
-        rect.setFillColor({52, 152, 219});
-    }
-    else {
-        rect.setFillColor({82, 132, 239});
-    }
+    
     renderer.draw(rect);
     renderer.draw(label);
     renderer.draw(text);
@@ -38,6 +33,12 @@ void TextBox::render(sf::RenderTarget& renderer)
 
 void TextBox::update(float dt)
 {
+	if (!isActive) {
+		rect.setFillColor({ 52, 152, 219 });
+	}
+	else {
+		rect.setFillColor({ 82, 132, 239 });
+	}
 	holdTime += dt;
 	while (holdTime > 0.7f)
 	{

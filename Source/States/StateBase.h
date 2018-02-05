@@ -25,7 +25,7 @@ class StateBase
 
         virtual void fixedUpdate(sf::Time deltaTime) = 0;
 
-        virtual void render(sf::RenderTarget& renderer) = 0;
+        virtual void render(sf::RenderTarget& renderer) const = 0;
 
     protected:
         Game* gamePtr;

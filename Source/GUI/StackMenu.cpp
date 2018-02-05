@@ -70,7 +70,7 @@ void StackMenu::handleEvent(sf::Event e, const sf::RenderWindow& window)
     }
 }
 
-void StackMenu::render(sf::RenderTarget& renderer)
+void StackMenu::render(sf::RenderTarget& renderer) const
 {
     renderer.draw(background);
     for (auto& widget : widgets) {

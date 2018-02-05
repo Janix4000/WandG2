@@ -6,6 +6,7 @@
 #include "../GUI/Menu.h"
 
 #include "../GUI/BattleHUD.h"
+#include "../Inventory/Inventory.h"
 
 
 class StatePlaying : public StateBase
@@ -21,7 +22,7 @@ class StatePlaying : public StateBase
 
         void fixedUpdate(sf::Time deltaTime) override;
 
-        void render(sf::RenderTarget& renderer)	override;
+        void render(sf::RenderTarget& renderer)const	override;
 
     private:
         gui::Menu testMenu;
@@ -36,6 +37,8 @@ class StatePlaying : public StateBase
 		Armor anotherHead;
 		MainHero heroTest;
 		gui::SpellMenu spellMenuTest;
+
+		Inventory::ItemObj testItemObj;
 };
 
 #endif // STATEPLAYING_H_INCLUDED

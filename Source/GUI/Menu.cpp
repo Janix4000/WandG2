@@ -59,7 +59,7 @@ namespace gui
 		}
 	}
 
-	void Menu::render(sf::RenderTarget & renderer)
+	void Menu::render(sf::RenderTarget & renderer) const
 	{
 		renderer.draw(background);
 		for (auto& widget : widgets)
