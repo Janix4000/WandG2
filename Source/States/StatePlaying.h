@@ -38,7 +38,7 @@ class StatePlaying : public StateBase
 		MainHero heroTest;
 		gui::SpellMenu spellMenuTest;
 
-		Inventory::ItemObj testItemObj;
+		Inventory inv;
 };
 
 #endif // STATEPLAYING_H_INCLUDED

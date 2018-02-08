@@ -137,5 +137,8 @@
     <ClInclude Include="Source\Inventory\Inventory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Inventory\Slot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
