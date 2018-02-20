@@ -22,10 +22,17 @@ public:
 		updateAllEntities(dt);
 
 		handleBoundingForAllEntities();
-		applyPerspectiveToAllEntities();
 
-		applyPerspectiveToFloor();
-		perspectiveFactorChanger();
+		if (isPerspectiveHandled)
+		{
+			applyPerspectiveToAllEntities();
+			applyPerspectiveToFloor();
+			perspectiveFactorChanger();
+		}
+		else
+		{
+			applyAbsolutePosToAllEntities();
+		}
 	}
 
 	void render(sf::RenderTarget& renderer) const
@@ -37,8 +44,20 @@ public:
 	void handleEvent(sf::Event e, const sf::RenderWindow& window)
 	{
 		const auto mousePos = sf::Mouse::getPosition(window);
-		
+
 		floor.setPos({ float(mousePos.x), float(mousePos.y) });
+
+		switch (e.type)
+		{
+		case sf::Event::KeyPressed:
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+			{
+				switchPerspectiveHandling();
+			}
+			break;
+		default:
+			break;
+		}
 	}
 
 	void handleInput()
@@ -51,6 +70,41 @@ private:
 	float perspectiveFactor = 300.f;
 
 	std::vector<Entity> entities;
+
+	bool isPerspectiveHandled = true;
+
+	void switchPerspectiveHandling()
+	{
+		isPerspectiveHandled = !isPerspectiveHandled;
+
+		if (!isPerspectiveHandled)
+		{
+			removePerspectiveFromAllEntities();
+			removePerspectiveFromFloor();
+		}
+	}
+
+	void removePerspectiveFromAllEntities()
+	{
+		for (auto& entity : entities)
+		{
+			removePerspective(entity);
+		}
+	}
+
+	void removePerspective(Entity& entity)
+	{
+		auto& sprite = entity.getSprite();
+
+		sprite.setScale(1.f, 1.f);
+	}
+
+	void removePerspectiveFromFloor()
+	{
+		auto& shape = floor.getShape();
+
+		shape.setScale(1.f, 1.f);
+	}
 
 	void updateAllEntities(float dt)
 	{
@@ -68,6 +122,43 @@ private:
 		}
 	}
 
+	void applyPerspective(Entity& entity)
+	{
+		auto& sprite = entity.getSprite();
+
+		const auto pos = entity.getPosition();
+		const float yFactor = getYFactor(pos);
+
+		const auto factoredPosition = getPerspectivePosition(pos, yFactor);
+
+		sprite.setPosition(factoredPosition);
+		sprite.setScale(yFactor, yFactor);
+	}
+
+	float getYFactor(const sf::Vector2f& pos) const 
+	{
+		return perspectiveFactor / (perspectiveFactor - pos.y);
+	}
+
+	sf::Vector2f getPerspectivePosition(const sf::Vector2f& pos, float yFactor) const
+	{
+		return floor.getPosition() + sf::Vector2f(pos.x, pos.y * yFactor);
+	}
+
+	void applyPerspectiveToFloor()
+	{
+		const float yFactor = getYFactor(-floor.getSize());
+		floor.getShape().setScale(1.f, yFactor);
+	}
+
+	void applyAbsolutePosToAllEntities()
+	{
+		for (auto& entity : entities)
+		{
+			applyAbsolutePos(entity);
+		}
+	}
+
 	void applyAbsolutePos(Entity& entity)
 	{
 		auto& sprite = entity.getSprite();
@@ -80,35 +171,6 @@ private:
 	sf::Vector2f getAbsoloutePos(const Entity& entity)
 	{
 		return entity.getPosition() + floor.getPosition();;
-	}
-
-	void applyPerspective(Entity& entity)
-	{
-		auto& sprite = entity.getSprite();
-
-		const auto shift = entity.getPosition();
-		const float yFactor = getYFactor(shift);
-
-		const auto factoredPosition = getFactoredPosition(shift, yFactor);
-
-		sprite.setPosition(factoredPosition);
-		sprite.setScale(yFactor, yFactor);
-	}
-
-	float getYFactor(const sf::Vector2f& shift) const 
-	{
-		return perspectiveFactor / (perspectiveFactor - shift.y);
-	}
-
-	sf::Vector2f getFactoredPosition(const sf::Vector2f& shift, float yFactor) const
-	{
-		return floor.getPosition() + sf::Vector2f(shift.x, shift.y * yFactor);
-	}
-
-	void applyPerspectiveToFloor()
-	{
-		const float yFactor = getYFactor(-floor.getSize());
-		floor.getShape().setScale(1.f, yFactor);
 	}
 
 	void renderAllEntities(sf::RenderTarget& renderer) const
