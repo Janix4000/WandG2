@@ -174,6 +174,11 @@ public:
 		return status == State::NoItem;
 	}
 
+	bool isHold() const
+	{
+		return status == State::Hold;
+	}
+
 private:
 	void moveSpriteToMouse(const sf::RenderWindow& window)
 	{

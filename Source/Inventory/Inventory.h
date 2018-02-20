@@ -52,8 +52,16 @@ public:
 
 		for (auto& slot : slots)
 		{
-			slot.drawItem(renderer);
+			if(!slot.isHold())
+				slot.drawItem(renderer);
 		}
+
+		for (auto& slot : slots)
+		{
+			if (slot.isHold())
+				slot.drawItem(renderer);
+		}
+
 	}
 
 	void update(float dt)
@@ -141,5 +149,5 @@ private:
 
 	sf::Vector2i capacity;
 
-	std::vector < Slot > slots;
+	std::vector<Slot> slots;
 };
