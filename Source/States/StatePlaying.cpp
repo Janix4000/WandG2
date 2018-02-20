@@ -15,7 +15,10 @@ StatePlaying::StatePlaying(Game& game)
 	testMenu(game.getWindow()),
 	spellMenuTest({ 300, 300 }, heroTest),
 	anotherHead(10.f),
-	inv({ 2, 2 })
+	inv({ 2, 2 }),
+	floor({ 1280.f, 720.f/2.f - 100 }, { 1280.f/2.f  , 720.f/2.f }),
+	testEntity(floor)
+
 {
 	{
 		auto b = gui::make_button();
@@ -96,6 +99,8 @@ void StatePlaying::handleEvent(sf::Event e)
 void StatePlaying::handleInput()
 {
 	inv.handleInput(gamePtr->getWindow());
+
+	testEntity.handleInput(gamePtr->getWindow());
 }
 
 void StatePlaying::update(sf::Time deltaTime)
@@ -111,12 +116,22 @@ void StatePlaying::update(sf::Time deltaTime)
 	inv.update(dt);
 
 
-	hp -= 0.07f;
+	hp -= 0.17f;
 
 	if (hp < 0.f)
 	{
 		hp = maxHP;
 	}
+
+	sf::Vector2i mousePos = sf::Mouse::getPosition(gamePtr->getWindow());
+
+	//testEntity.setPos({ (float)mousePos.x, (float)mousePos.y });
+
+	testEntity.update(dt);
+
+	
+	
+	
 }
 
 void StatePlaying::fixedUpdate(sf::Time deltaTime)
@@ -134,4 +149,8 @@ void StatePlaying::render(sf::RenderTarget& renderer) const
 	inv.render(renderer);
 
 	spellMenuTest.render(renderer);
+
+	floor.render(renderer);
+
+	testEntity.render(renderer);
 }
