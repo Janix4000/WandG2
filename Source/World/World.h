@@ -22,7 +22,10 @@ public:
 		updateAllEntities(dt);
 
 		handleBoundingForAllEntities();
-		applyParalaxToAllEntities();
+		applyPerspectiveToAllEntities();
+
+		applyPerspectiveToFloor();
+		perspectiveFactorChanger();
 	}
 
 	void render(sf::RenderTarget& renderer) const
@@ -32,7 +35,11 @@ public:
 	}
 
 	void handleEvent(sf::Event e, const sf::RenderWindow& window)
-	{}
+	{
+		const auto mousePos = sf::Mouse::getPosition(window);
+		
+		floor.setPos({ float(mousePos.x), float(mousePos.y) });
+	}
 
 	void handleInput()
 	{}
@@ -41,7 +48,7 @@ private:
 	Floor floor;
 
 	float yFactor = 1.f;
-	float paralaxFactor = 300.f;
+	float perspectiveFactor = 300.f;
 
 	std::vector<Entity> entities;
 
@@ -53,40 +60,55 @@ private:
 		}
 	}
 
-	void applyParalaxToAllEntities()
+	void applyPerspectiveToAllEntities()
 	{
 		for (auto& entity : entities)
 		{
-			applyParalax(entity);
+			applyPerspective(entity);
 		}
 	}
 
-
-	void applyParalax(Entity& entity)
+	void applyAbsolutePos(Entity& entity)
 	{
 		auto& sprite = entity.getSprite();
 
-		const auto shift = getShift(entity);
+		const auto absPos = getAbsoloutePos(entity);
+
+		sprite.setPosition(absPos);
+	}
+
+	sf::Vector2f getAbsoloutePos(const Entity& entity)
+	{
+		return entity.getPosition() + floor.getPosition();;
+	}
+
+	void applyPerspective(Entity& entity)
+	{
+		auto& sprite = entity.getSprite();
+
+		const auto shift = entity.getPosition();
 		const float yFactor = getYFactor(shift);
 
 		const auto factoredPosition = getFactoredPosition(shift, yFactor);
 
 		sprite.setPosition(factoredPosition);
-	}
-
-	sf::Vector2f getShift(const Entity& entity) const 
-	{
-		return entity.getPosition() - floor.getPosition() ;
+		sprite.setScale(yFactor, yFactor);
 	}
 
 	float getYFactor(const sf::Vector2f& shift) const 
 	{
-		return paralaxFactor / (shift.y + paralaxFactor);
+		return perspectiveFactor / (perspectiveFactor - shift.y);
 	}
 
 	sf::Vector2f getFactoredPosition(const sf::Vector2f& shift, float yFactor) const
 	{
 		return floor.getPosition() + sf::Vector2f(shift.x, shift.y * yFactor);
+	}
+
+	void applyPerspectiveToFloor()
+	{
+		const float yFactor = getYFactor(-floor.getSize());
+		floor.getShape().setScale(1.f, yFactor);
 	}
 
 	void renderAllEntities(sf::RenderTarget& renderer) const
@@ -107,16 +129,15 @@ private:
 
 	void handleBoundindg(Entity& entity)
 	{
-		const auto shapeSize = floor.getSize();
-		const auto shapePos = floor.getPosition();
+		const auto floorSize = floor.getSize();
 
 		const auto pos = entity.getPosition();
 		const auto size = entity.getSize();
 
-		const auto sR = shapePos.x + shapeSize.x / 2;
-		const auto sL = shapePos.x - shapeSize.x / 2;
-		const auto sT = shapePos.y - shapeSize.y;
-		const auto sB = shapePos.y;
+		const auto fR = 0.f + floorSize.x / 2;
+		const auto fL = 0.f - floorSize.x / 2;
+		const auto fT = 0.f - floorSize.y;
+		const auto fB = 0.f;
 
 		const auto R = pos.x + size.x / 2;
 		const auto L = pos.x - size.x / 2;
@@ -125,25 +146,39 @@ private:
 
 		sf::Vector2f shift;
 
-		if (R >= sR)
+		if (R >= fR)
 		{
-			shift.x += sR - R;
+			shift.x += fR - R;
 		}
-		if (L <= sL)
+		if (L <= fL)
 		{
-			shift.x += sL - L;
+			shift.x += fL - L;
 		}
-		if (B >= sB)
+		if (B >= fB)
 		{
-			shift.y += sB - B;
+			shift.y += fB - B;
 		}
-		if (T <= sT)
+		if (T <= fT)
 		{
-			shift.y += sT - T;
+			shift.y += fT - T;
 		}
 
 		entity.move(shift);
 
+	}
+
+	void perspectiveFactorChanger()
+	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+		{
+			perspectiveFactor -= 0.5f;
+			std::cout << perspectiveFactor << std::endl;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))
+		{
+			perspectiveFactor += 0.5f;
+			std::cout << perspectiveFactor << std::endl;
+		}
 	}
 
 };

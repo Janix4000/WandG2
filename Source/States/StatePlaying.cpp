@@ -86,6 +86,8 @@ void StatePlaying::handleEvent(sf::Event e)
 
 	inv.handleEvent(e, gamePtr->getWindow());
 
+	testWorld.handleEvent(e, gamePtr->getWindow());
+
 	if (e.type == sf::Event::KeyPressed)
 	{
 		switch (e.key.code)

@@ -34,7 +34,7 @@ public:
 		return floor.getPosition();
 	}
 
-	const sf::RectangleShape& getShape() const
+	sf::RectangleShape& getShape()
 	{
 		return floor;
 	}
