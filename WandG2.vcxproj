@@ -65,6 +65,7 @@
     <ClInclude Include="Source\Utility\ChilliMath.h" />
     <ClInclude Include="Source\Utility\Vec2.h" />
     <ClInclude Include="Source\Utility\Vec3.h" />
+    <ClInclude Include="Source\World\Camera.h" />
     <ClInclude Include="Source\World\Floor.h" />
     <ClInclude Include="Source\World\World.h" />
   </ItemGroup>

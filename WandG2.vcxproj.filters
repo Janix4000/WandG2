@@ -155,5 +155,8 @@
     <ClInclude Include="Source\World\World.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\World\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

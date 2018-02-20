@@ -2,6 +2,7 @@
 
 #include "../Objects/Entity.h"
 #include "Floor.h"
+#include "Camera.h"
 
 class World
 {
@@ -9,12 +10,16 @@ public:
 
 	World()
 		:
-		floor({ 1280.f, 720.f / 2.f - 100 }, { 1280.f / 2.f  , 720.f / 2.f })
-	{}
+		floor({ 3.f * 1280.f, 720.f + 100.f }, { 1280.f / 2.f  , 720.f / 2.f })
+	{
+		perspectiveFactor = getPerspectiveFactorByRealFloorHeight(520.f);
+	}
 
 	void addEntity(Entity& entity)
 	{
 		entities.emplace_back(entity);
+
+		indexOfFollowedEntity = entities.size() - 1;
 	}
 
 	void update(float dt)
@@ -33,10 +38,14 @@ public:
 		{
 			applyAbsolutePosToAllEntities();
 		}
+
+		handleCameraFollowing();
 	}
 
 	void render(sf::RenderTarget& renderer) const
 	{
+		mainCamera.applyToWindow(renderer);
+
 		floor.render(renderer);
 		renderAllEntities(renderer);
 	}
@@ -45,7 +54,7 @@ public:
 	{
 		const auto mousePos = sf::Mouse::getPosition(window);
 
-		floor.setPos({ float(mousePos.x), float(mousePos.y) });
+		//floor.setPos({ float(mousePos.x), float(mousePos.y) });
 
 		switch (e.type)
 		{
@@ -64,10 +73,27 @@ public:
 	{}
 
 private:
+
+	Camera mainCamera;
+
+	void handleCameraFollowing()
+	{
+		if (indexOfFollowedEntity != -1)
+		{
+			const auto targetPos = entities[indexOfFollowedEntity].getPosition();
+
+			const auto floorPos = floor.getPosition();
+
+			mainCamera.setPosition({ (targetPos + floorPos).x, floorPos.y - 720.f/2.f  });
+		}
+	}
+
 	Floor floor;
 
 	float yFactor = 1.f;
-	float perspectiveFactor = 300.f;
+	float perspectiveFactor;
+
+	int indexOfFollowedEntity = -1;
 
 	std::vector<Entity> entities;
 
@@ -106,6 +132,7 @@ private:
 		shape.setScale(1.f, 1.f);
 	}
 
+
 	void updateAllEntities(float dt)
 	{
 		for (auto& entity : entities)
@@ -140,6 +167,7 @@ private:
 		return perspectiveFactor / (perspectiveFactor - pos.y);
 	}
 
+
 	sf::Vector2f getPerspectivePosition(const sf::Vector2f& pos, float yFactor) const
 	{
 		return floor.getPosition() + sf::Vector2f(pos.x, pos.y * yFactor);
@@ -173,6 +201,7 @@ private:
 		return entity.getPosition() + floor.getPosition();;
 	}
 
+
 	void renderAllEntities(sf::RenderTarget& renderer) const
 	{
 		for (auto& entity : entities)
@@ -180,6 +209,7 @@ private:
 			entity.render(renderer);
 		}
 	}
+
 
 	void handleBoundingForAllEntities()
 	{
@@ -229,6 +259,7 @@ private:
 
 	}
 
+
 	void perspectiveFactorChanger()
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
@@ -241,6 +272,14 @@ private:
 			perspectiveFactor += 0.5f;
 			std::cout << perspectiveFactor << std::endl;
 		}
+	}
+
+	float getPerspectiveFactorByRealFloorHeight(float realFloorHeight)
+	{
+		const float floorHeight = floor.getSize().y;
+		assert(realFloorHeight < floorHeight);
+
+		return - (realFloorHeight * floorHeight) / (realFloorHeight - floorHeight);
 	}
 
 };
