@@ -20,18 +20,11 @@ private:
 	sf::Sprite sprite;
 	TexturePtr texture;
 
-	float yFactor = 1.f;
-	float paralaxFactor = 300.f;
-
 	float speed = 250.f;
-
-	const sf::RectangleShape& floor;
 
 public:
 
-	Entity(const Floor& floor)
-		:
-		floor(floor.getShape())
+	Entity()
 	{
 		texture = ResourceHolder::get().textures.acquire("entity");
 		sprite.setTexture(*texture);
@@ -40,7 +33,7 @@ public:
 
 		sprite.setOrigin(size.x / 2, size.y);
 
-		setPos({ floor.getPosition().x , floor.getPosition().y });
+		setPos({500.f, 500.f });
 	}
 
 	void update(float dt)
@@ -81,8 +74,6 @@ public:
 
 		move(movement);
 
-		handleBounds();
-
 	}
 
 	void handleInput(const sf::RenderWindow& window)
@@ -98,13 +89,12 @@ public:
 	void setPos(sf::Vector2f position)
 	{
 		pos = position;
-		handleParalax();
-		calcSpritePos();
+		sprite.setPosition(pos);
 	}
 
 	void move(sf::Vector2f shift)
 	{
-		setPos(pos + shift);
+		setPos(pos + shift);	
 	}
 
 	sf::Sprite& getSprite()
@@ -117,79 +107,10 @@ public:
 		return pos;
 	}
 
+	const sf::Vector2f& getSize() const
+	{
+		return size;
+	}
+
 private:
-
-	void handleParalax()
-	{ 
-		yFactor = (paralaxFactor / (floor.getPosition().y - pos.y + paralaxFactor));
-
-		//system("cls");
-		//std::cout << yFactor << std::endl;
-
-		sprite.setScale(yFactor, yFactor);
-	}
-
-	/*
-	void moveSprite(const sf::Vector2f& shift)
-	{
-		const auto oldSpritePos = sprite.getPosition();
-		sprite.setPosition(oldSpritePos + (yFactor * shift));
-	}
-	*/
-
-	void calcSpritePos()
-	{
-		const float yShift = (pos.y - floor.getPosition().y) * yFactor;
-
-		sprite.setPosition({ pos.x ,floor.getPosition().y + yShift });
-	}
-
-	void initStartingPosition(const sf::Vector2f& position)
-	{
-		pos = position;
-
-		const auto distToBound = floor.getPosition().y - pos.y;
-		sprite.setPosition(pos.x, floor.getPosition().y);
-		calcSpritePos();
-
-	}
-
-	void handleBounds()
-	{
-		const auto shapeSize = floor.getSize();
-		const auto shapePos = floor.getPosition();
-
-		const auto sR = shapePos.x + shapeSize.x / 2;
-		const auto sL = shapePos.x - shapeSize.x / 2;
-		const auto sT = shapePos.y - shapeSize.y;
-		const auto sB = shapePos.y;
-
-		const auto R = pos.x + size.x / 2;
-		const auto L = pos.x - size.x / 2;
-		const auto T = pos.y - size.y;
-		const auto B = pos.y;
-
-		sf::Vector2f shift;
-
-		if (R >= sR)
-		{
-			shift.x += sR - R;
-		}
-		if (L <= sL)
-		{
-			shift.x += sL - L;
-		}
-		if (B >= sB)
-		{
-			shift.y += sB - B;
-		}
-		if (T <= sT)
-		{
-			shift.y += sT - T;
-		}
-
-		move(shift);
-
-		//std::cout << pos.x << pos.y << std::endl;
-	}
 };

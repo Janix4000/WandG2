@@ -8,7 +8,7 @@
 #include "../GUI/BattleHUD.h"
 #include "../Inventory/Inventory.h"
 
-#include "../Objects/Entity.h"
+#include "../World/World.h"
 
 
 class StatePlaying : public StateBase
@@ -42,8 +42,10 @@ class StatePlaying : public StateBase
 
 		Inventory inv;
 
-		Floor floor;
-		Entity testEntity;
+		//Floor floor;
+		//Entity testEntity;
+
+		World testWorld;
 };
 
 #endif // STATEPLAYING_H_INCLUDED

@@ -15,10 +15,7 @@ StatePlaying::StatePlaying(Game& game)
 	testMenu(game.getWindow()),
 	spellMenuTest({ 300, 300 }, heroTest),
 	anotherHead(10.f),
-	inv({ 2, 2 }),
-	floor({ 1280.f, 720.f/2.f - 100 }, { 1280.f/2.f  , 720.f/2.f }),
-	testEntity(floor)
-
+	inv({ 2, 2 })
 {
 	{
 		auto b = gui::make_button();
@@ -49,27 +46,33 @@ StatePlaying::StatePlaying(Game& game)
 		testMenu.addWidget(std::move(hpIcon));
 	}
 
-	heroTest.debugPrintArmor();
+	{
+		heroTest.debugPrintArmor();
 
-	heroTest.addHead(anotherHead);
+		heroTest.addHead(anotherHead);
 
-	heroTest.debugPrintArmor();
+		heroTest.debugPrintArmor();
 
-	heroTest.addHead(Armor(14));
-	heroTest.debugPrintArmor();
-	
-	
-	auto item = std::make_unique<Item>();
-	item->setTexture(ResourceHolder::get().textures.acquire("test_item"));
-	inv.addItem(std::move(item));
-	
-	auto item1 = std::make_unique<Item>();
-	item1->setTexture(ResourceHolder::get().textures.acquire("test_item1"));
-	inv.addItem(std::move(item1));
+		heroTest.addHead(Armor(14));
+		heroTest.debugPrintArmor();
 
-	auto item2 = std::make_unique<Item>();
-	item2->setTexture(ResourceHolder::get().textures.acquire("test_item2"));
-	inv.addItem(std::move(item2));
+
+		auto item = std::make_unique<Item>();
+		item->setTexture(ResourceHolder::get().textures.acquire("test_item"));
+		inv.addItem(std::move(item));
+
+		auto item1 = std::make_unique<Item>();
+		item1->setTexture(ResourceHolder::get().textures.acquire("test_item1"));
+		inv.addItem(std::move(item1));
+
+		auto item2 = std::make_unique<Item>();
+		item2->setTexture(ResourceHolder::get().textures.acquire("test_item2"));
+		inv.addItem(std::move(item2));
+	}
+
+	Entity en;
+
+	testWorld.addEntity(en);
 }
 
 void StatePlaying::handleEvent(sf::Event e)
@@ -100,7 +103,7 @@ void StatePlaying::handleInput()
 {
 	inv.handleInput(gamePtr->getWindow());
 
-	testEntity.handleInput(gamePtr->getWindow());
+	
 }
 
 void StatePlaying::update(sf::Time deltaTime)
@@ -125,12 +128,7 @@ void StatePlaying::update(sf::Time deltaTime)
 
 	sf::Vector2i mousePos = sf::Mouse::getPosition(gamePtr->getWindow());
 
-	//testEntity.setPos({ (float)mousePos.x, (float)mousePos.y });
-
-	testEntity.update(dt);
-
-	
-	
+	testWorld.update(dt);
 	
 }
 
@@ -150,7 +148,5 @@ void StatePlaying::render(sf::RenderTarget& renderer) const
 
 	spellMenuTest.render(renderer);
 
-	floor.render(renderer);
-
-	testEntity.render(renderer);
+	testWorld.render(renderer);
 }
