@@ -48,3 +48,9 @@ inline T interpolate( const T& src,const T& dst,float alpha )
 {
 	return src + (dst - src) * alpha;
 }
+
+template<typename T>
+inline T map(const T& base, const T& oldMin, const T& oldMax, const T& newMin, const T& newMax)
+{
+	return ((base - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
+}
