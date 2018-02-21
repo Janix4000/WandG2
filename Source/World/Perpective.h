@@ -8,20 +8,20 @@
 class Perspective
 {
 public:
-	Perspective(Floor& baseFloor, float perspectiveFactor)
+	Perspective(Floor& baseFloor, float factor)
 		:
 		floorPtr(&baseFloor),
-		perspectiveFactor(perspectiveFactor)
+		factor(factor)
 	{}
 
 	Perspective(Floor& baseFloor, sf::Vector2f absoluteSize)
 		:
 		floorPtr(&baseFloor) 
 	{
-		perspectiveFactor = getPerspectiveFactorByRealFloorHeight(absoluteSize.y);
+		factor = getPerspectiveFactorByRealFloorHeight(absoluteSize.y);
 	}
 
-	void applyPerspective(Entity& entity)
+	void applyTo(Entity& entity)
 	{
 		auto& sprite = entity.getSprite();
 
@@ -34,20 +34,20 @@ public:
 		sprite.setScale(yFactor, yFactor);
 	}
 
-	void applyPerspectiveToFloor()
+	void applyToFloor()
 	{
 		const float yFactor = getYFactor(-(floorPtr->getSize()));
 		floorPtr->getShape().setScale(1.f, yFactor);
 	}
 
-	void removePerspective(Entity& entity)
+	void removeFrom(Entity& entity)
 	{
 		auto& sprite = entity.getSprite();
 
 		sprite.setScale(1.f, 1.f);
 	}
 
-	void removePerspectiveFromFloor()
+	void removeFromFloor()
 	{
 		auto& shape = floorPtr->getShape();
 
@@ -57,26 +57,26 @@ public:
 
 	float getPerspectiveFactor() const
 	{
-		return perspectiveFactor;
+		return factor;
 	}
 
-	void setPerspectiveFactor(float newPerspectiveFactor)
+	void setFactor(float newPerspectiveFactor)
 	{
 		assert(newPerspectiveFactor > 0.f);
-		perspectiveFactor = newPerspectiveFactor;
+		factor = newPerspectiveFactor;
 	}
 
 	void setPerspectiveFloorHeight(float height)
 	{
 		float newPerspectiveFactor = getPerspectiveFactorByRealFloorHeight(height);
-		setPerspectiveFactor(newPerspectiveFactor);
+		setFactor(newPerspectiveFactor);
 	}
 
 
 private:
 	Floor* floorPtr = nullptr;
 
-	float perspectiveFactor;
+	float factor;
 
 	float getPerspectiveFactorByRealFloorHeight(float realFloorHeight)
 	{
@@ -86,11 +86,12 @@ private:
 		return -(realFloorHeight * floorHeight) / (realFloorHeight - floorHeight);
 	}
 
+public:
 	float getYFactor(const sf::Vector2f& pos) const
 	{
-		return perspectiveFactor / (perspectiveFactor - pos.y);
+		return factor / (factor - pos.y);
 	}
-
+private:
 	sf::Vector2f getPerspectivePosition(const sf::Vector2f& pos) const
 	{
 		const auto yFactor = getYFactor(pos);

@@ -25,6 +25,13 @@ public:
 	{
 		window.setView(cam);
 	}
+	/*
+	sf::Vector2f getMousePosition(const sf::RenderWindow& window) const
+	{
+		sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+		return window.mapPixelToCoords(pixelPos);
+	}
+	*/
 private:
 
 	sf::View cam;

@@ -4,6 +4,7 @@
 #include "Floor.h"
 #include "Camera.h"
 #include "Curtain.h"
+#include "Perpective.h"
 
 class World
 {
@@ -14,9 +15,9 @@ public:
 		floor({  1280.f, 720.f + 100.f }, { 1280.f / 2.f  , 720.f / 2.f }),
 		frontCurtain(0.f),
 		midCurtain(-floor.getPosition().y),
-		backCurtain(-(floor.getPosition().y + 200.f))
+		backCurtain(-(floor.getPosition().y + 200.f)),
+		perspective(floor, { 0.f, 520.f })
 	{
-		perspectiveFactor = getPerspectiveFactorByRealFloorHeight(520.f);
 	}
 
 	void addEntity(Entity& entity)
@@ -35,7 +36,7 @@ public:
 		if (isPerspectiveHandled)
 		{
 			applyPerspectiveToAllEntities();
-			applyPerspectiveToFloor();
+			perspective.applyToFloor();
 			perspectiveFactorChanger();
 		}
 		else
@@ -44,8 +45,7 @@ public:
 		}
 
 
-
-		//handleCameraFollowing();
+		handleCameraFollowing();
 		handleCurtainsParalax();
 	}
 
@@ -67,9 +67,9 @@ public:
 
 	void handleEvent(sf::Event e, const sf::RenderWindow& window)
 	{
-		const auto mousePos = getMousePosition(window);
+		//const auto mousePos = mainCamera.getMousePosition(window);
 
-		floor.setPos({ float(mousePos.x), float(mousePos.y) }); 
+		//floor.setPos({ float(mousePos.x), float(mousePos.y) }); 
 
 		switch (e.type)
 		{
@@ -103,13 +103,9 @@ private:
 		}
 	}
 
-	sf::Vector2f getMousePosition(const sf::RenderWindow& window) const
-	{
-		sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
-		return window.mapPixelToCoords(pixelPos);
-	}
-
 	Floor floor;
+
+	Perspective perspective;
 
 	float perspectiveFactor;
 
@@ -126,7 +122,7 @@ private:
 		if (!isPerspectiveHandled)
 		{
 			removePerspectiveFromAllEntities();
-			removePerspectiveFromFloor();
+			perspective.removeFromFloor();
 		}
 	}
 
@@ -134,24 +130,9 @@ private:
 	{
 		for (auto& entity : entities)
 		{
-			removePerspective(entity);
+			perspective.removeFrom(entity);
 		}
 	}
-
-	void removePerspective(Entity& entity)
-	{
-		auto& sprite = entity.getSprite();
-
-		sprite.setScale(1.f, 1.f);
-	}
-
-	void removePerspectiveFromFloor()
-	{
-		auto& shape = floor.getShape();
-
-		shape.setScale(1.f, 1.f);
-	}
-
 
 	void updateAllEntities(float dt)
 	{
@@ -165,39 +146,10 @@ private:
 	{
 		for (auto& entity : entities)
 		{
-			applyPerspective(entity);
+			perspective.applyTo(entity);
 		}
 	}
 
-	void applyPerspective(Entity& entity)
-	{
-		auto& sprite = entity.getSprite();
-
-		const auto pos = entity.getPosition();
-		const float yFactor = getYFactor(pos);
-
-		const auto factoredPosition = getPerspectivePosition(pos, yFactor);
-
-		sprite.setPosition(factoredPosition);
-		sprite.setScale(yFactor, yFactor);
-	}
-
-	float getYFactor(const sf::Vector2f& pos) const
-	{
-		return perspectiveFactor / (perspectiveFactor - pos.y);
-	}
-
-
-	sf::Vector2f getPerspectivePosition(const sf::Vector2f& pos, float yFactor) const
-	{
-		return floor.getPosition() + sf::Vector2f(pos.x, pos.y * yFactor);
-	}
-
-	void applyPerspectiveToFloor()
-	{
-		const float yFactor = getYFactor(-floor.getSize());
-		floor.getShape().setScale(1.f, yFactor);
-	}
 
 	void applyAbsolutePosToAllEntities()
 	{
@@ -235,50 +187,9 @@ private:
 	{
 		for (auto& entity : entities)
 		{
-			handleBoundindg(entity);
+			floor.handleBounding(entity);
 		}
 	}
-
-	void handleBoundindg(Entity& entity)
-	{
-		const auto floorSize = floor.getSize();
-
-		const auto pos = entity.getPosition();
-		const auto size = entity.getSize();
-
-		const auto fR = 0.f + floorSize.x / 2;
-		const auto fL = 0.f - floorSize.x / 2;
-		const auto fT = 0.f - floorSize.y;
-		const auto fB = 0.f;
-
-		const auto R = pos.x + size.x / 2;
-		const auto L = pos.x - size.x / 2;
-		const auto T = pos.y;    -size.y;
-		const auto B = pos.y;
-
-		sf::Vector2f shift;
-
-		if (R >= fR)
-		{
-			shift.x += fR - R;
-		}
-		if (L <= fL)
-		{
-			shift.x += fL - L;
-		}
-		if (B >= fB)
-		{
-			shift.y += fB - B;
-		}
-		if (T <= fT)
-		{
-			shift.y += fT - T;
-		}
-
-		entity.move(shift);
-
-	}
-
 
 	void perspectiveFactorChanger()
 	{
@@ -292,14 +203,6 @@ private:
 			perspectiveFactor += 0.5f;
 			std::cout << perspectiveFactor << std::endl;
 		}
-	}
-
-	float getPerspectiveFactorByRealFloorHeight(float realFloorHeight)
-	{
-		const float floorHeight = floor.getSize().y;
-		assert(realFloorHeight < floorHeight);
-
-		return -(realFloorHeight * floorHeight) / (realFloorHeight - floorHeight);
 	}
 
 	Curtain frontCurtain;
@@ -316,7 +219,7 @@ private:
 	void handleParalax(Curtain& curtain)
 	{
 		const float height = curtain.getHeight();
-		const float yFactor = getYFactor({ 0.f, height });
+		const float yFactor = perspective.getYFactor({ 0.f, height });
 
 		float camShiftX = getCamShift().x;
 

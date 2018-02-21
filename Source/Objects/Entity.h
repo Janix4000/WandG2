@@ -6,8 +6,6 @@
 
 #include "../ResourceManager/ResourceHolder.h"
 
-
-#include "../World/Floor.h"
 #include "../Utility/Vec3.h"
 
 class Entity
