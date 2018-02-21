@@ -16,6 +16,11 @@ public:
 		cam.setCenter(position);
 	}
 
+	sf::Vector2f getPosition() const
+	{
+		return cam.getCenter();
+	}
+
 	void applyToWindow(sf::RenderTarget& window) const
 	{
 		window.setView(cam);

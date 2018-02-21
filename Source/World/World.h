@@ -3,6 +3,7 @@
 #include "../Objects/Entity.h"
 #include "Floor.h"
 #include "Camera.h"
+#include "Curtain.h"
 
 class World
 {
@@ -10,7 +11,10 @@ public:
 
 	World()
 		:
-		floor({ 3.f * 1280.f, 720.f + 100.f }, { 1280.f / 2.f  , 720.f / 2.f })
+		floor({  1280.f, 720.f + 100.f }, { 1280.f / 2.f  , 720.f / 2.f }),
+		frontCurtain(0.f),
+		midCurtain(-floor.getPosition().y),
+		backCurtain(-(floor.getPosition().y + 200.f))
 	{
 		perspectiveFactor = getPerspectiveFactorByRealFloorHeight(520.f);
 	}
@@ -39,22 +43,33 @@ public:
 			applyAbsolutePosToAllEntities();
 		}
 
-		handleCameraFollowing();
+
+
+		//handleCameraFollowing();
+		handleCurtainsParalax();
 	}
 
 	void render(sf::RenderTarget& renderer) const
 	{
 		mainCamera.applyToWindow(renderer);
 
+		
+
 		floor.render(renderer);
+		backCurtain.render(renderer);
+		midCurtain.render(renderer);
+
 		renderAllEntities(renderer);
+
+		frontCurtain.render(renderer);
+
 	}
 
 	void handleEvent(sf::Event e, const sf::RenderWindow& window)
 	{
-		const auto mousePos = sf::Mouse::getPosition(window);
+		const auto mousePos = getMousePosition(window);
 
-		//floor.setPos({ float(mousePos.x), float(mousePos.y) });
+		floor.setPos({ float(mousePos.x), float(mousePos.y) }); 
 
 		switch (e.type)
 		{
@@ -84,8 +99,14 @@ private:
 
 			const auto floorPos = floor.getPosition();
 
-			mainCamera.setPosition({ (targetPos + floorPos).x, floorPos.y - 720.f/2.f  });
+			mainCamera.setPosition({ (targetPos + floorPos).x, floorPos.y - 720.f / 2.f });
 		}
+	}
+
+	sf::Vector2f getMousePosition(const sf::RenderWindow& window) const
+	{
+		sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+		return window.mapPixelToCoords(pixelPos);
 	}
 
 	Floor floor;
@@ -162,7 +183,7 @@ private:
 		sprite.setScale(yFactor, yFactor);
 	}
 
-	float getYFactor(const sf::Vector2f& pos) const 
+	float getYFactor(const sf::Vector2f& pos) const
 	{
 		return perspectiveFactor / (perspectiveFactor - pos.y);
 	}
@@ -233,7 +254,7 @@ private:
 
 		const auto R = pos.x + size.x / 2;
 		const auto L = pos.x - size.x / 2;
-		const auto T = pos.y;   // -size.y;
+		const auto T = pos.y;    -size.y;
 		const auto B = pos.y;
 
 		sf::Vector2f shift;
@@ -279,7 +300,38 @@ private:
 		const float floorHeight = floor.getSize().y;
 		assert(realFloorHeight < floorHeight);
 
-		return - (realFloorHeight * floorHeight) / (realFloorHeight - floorHeight);
+		return -(realFloorHeight * floorHeight) / (realFloorHeight - floorHeight);
+	}
+
+	Curtain frontCurtain;
+	Curtain midCurtain;
+	Curtain backCurtain;
+
+	void handleCurtainsParalax()
+	{
+		handleParalax(frontCurtain);
+		handleParalax(midCurtain);
+		handleParalax(backCurtain);
+	}
+
+	void handleParalax(Curtain& curtain)
+	{
+		const float height = curtain.getHeight();
+		const float yFactor = getYFactor({ 0.f, height });
+
+		float camShiftX = getCamShift().x;
+
+		auto& sprite = curtain.getSprite();
+
+		const sf::Vector2f finalSpritePos = sf::Vector2f( -camShiftX * yFactor, height * yFactor ) + floor.getPosition();
+
+		sprite.setPosition(finalSpritePos);
+
+	}
+
+	sf::Vector2f getCamShift() const
+	{
+		return mainCamera.getPosition() - floor.getPosition();
 	}
 
 };
