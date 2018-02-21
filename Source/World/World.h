@@ -111,7 +111,6 @@ private:
 
 	Floor floor;
 
-	float yFactor = 1.f;
 	float perspectiveFactor;
 
 	int indexOfFollowedEntity = -1;
