@@ -20,9 +20,9 @@ public:
 	{
 	}
 
-	void addEntity(Entity& entity)
+	void addEntity(EntityPtr entity)
 	{
-		entities.emplace_back(entity);
+		entities.emplace_back(std::move(entity));
 
 		indexOfFollowedEntity = entities.size() - 1;
 	}
@@ -30,13 +30,13 @@ public:
 	void update(float dt)
 	{
 		updateAllEntities(dt);
-
 		handleBoundingForAllEntities();
 
 		if (isPerspectiveHandled)
 		{
 			applyPerspectiveToAllEntities();
 			perspective.applyToFloor();
+			
 			perspectiveFactorChanger();
 		}
 		else
@@ -56,12 +56,12 @@ public:
 		
 
 		floor.render(renderer);
-		backCurtain.render(renderer);
-		midCurtain.render(renderer);
+		//backCurtain.render(renderer);
+		//midCurtain.render(renderer);
 
 		renderAllEntities(renderer);
 
-		frontCurtain.render(renderer);
+		//frontCurtain.render(renderer);
 
 	}
 
@@ -95,7 +95,7 @@ private:
 	{
 		if (indexOfFollowedEntity != -1)
 		{
-			const auto targetPos = entities[indexOfFollowedEntity].getPosition();
+			const auto targetPos = entities[indexOfFollowedEntity]->getPosition();
 
 			const auto floorPos = floor.getPosition();
 
@@ -107,11 +107,9 @@ private:
 
 	Perspective perspective;
 
-	float perspectiveFactor;
+	size_t indexOfFollowedEntity = -1;
 
-	int indexOfFollowedEntity = -1;
-
-	std::vector<Entity> entities;
+	std::vector<EntityPtr> entities;
 
 	bool isPerspectiveHandled = true;
 
@@ -130,7 +128,7 @@ private:
 	{
 		for (auto& entity : entities)
 		{
-			perspective.removeFrom(entity);
+			perspective.removeFrom(*entity);
 		}
 	}
 
@@ -138,7 +136,7 @@ private:
 	{
 		for (auto& entity : entities)
 		{
-			entity.update(dt);
+			entity->update(dt);
 		}
 	}
 
@@ -146,7 +144,7 @@ private:
 	{
 		for (auto& entity : entities)
 		{
-			perspective.applyTo(entity);
+			perspective.applyTo(*entity);
 		}
 	}
 
@@ -155,13 +153,13 @@ private:
 	{
 		for (auto& entity : entities)
 		{
-			applyAbsolutePos(entity);
+			applyAbsolutePos(*entity);
 		}
 	}
 
 	void applyAbsolutePos(Entity& entity)
 	{
-		auto& sprite = entity.getSprite();
+		auto& sprite = entity.getObject();
 
 		const auto absPos = getAbsoloutePos(entity);
 
@@ -178,7 +176,7 @@ private:
 	{
 		for (auto& entity : entities)
 		{
-			entity.render(renderer);
+			entity->render(renderer);
 		}
 	}
 
@@ -187,21 +185,23 @@ private:
 	{
 		for (auto& entity : entities)
 		{
-			floor.handleBounding(entity);
+			floor.handleBounding(*entity);
 		}
 	}
 
 	void perspectiveFactorChanger()
 	{
+		float factor = perspective.getPerspectiveFactor();
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 		{
-			perspectiveFactor -= 0.5f;
-			std::cout << perspectiveFactor << std::endl;
+			perspective.setFactor(factor - 1.5f);
+			std::cout << factor << std::endl;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))
 		{
-			perspectiveFactor += 0.5f;
-			std::cout << perspectiveFactor << std::endl;
+			perspective.setFactor(factor + 1.5f);
+			std::cout << factor << std::endl;
 		}
 	}
 

@@ -23,7 +23,7 @@ public:
 
 	void applyTo(Entity& entity)
 	{
-		auto& sprite = entity.getSprite();
+		auto& sprite = entity.getObject();
 
 		const auto pos = entity.getPosition();
 		const float yFactor = getYFactor(pos);
@@ -42,7 +42,7 @@ public:
 
 	void removeFrom(Entity& entity)
 	{
-		auto& sprite = entity.getSprite();
+		auto& sprite = entity.getObject();
 
 		sprite.setScale(1.f, 1.f);
 	}

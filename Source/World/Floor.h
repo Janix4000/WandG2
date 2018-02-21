@@ -61,7 +61,7 @@ public:
 
 		const auto R = pos.x + size.x / 2;
 		const auto L = pos.x - size.x / 2;
-		const auto T = pos.y;    -size.y;
+		const auto T = pos.y;
 		const auto B = pos.y;
 
 		sf::Vector2f shift;

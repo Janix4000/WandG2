@@ -164,5 +164,8 @@
     <ClInclude Include="Source\World\Perpective.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Objects\Hero.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

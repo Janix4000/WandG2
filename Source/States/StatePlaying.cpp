@@ -4,6 +4,7 @@
 #include "../GUI/Textbox.h"
 #include "../GUI/Icon.h"
 #include "../Game.h"
+#include "../Objects/Hero.h"
 
 #include <iostream>
 
@@ -70,9 +71,11 @@ StatePlaying::StatePlaying(Game& game)
 		inv.addItem(std::move(item2));
 	}
 
-	Entity en;
+	
+	auto en = makeTestHero();
 
-	testWorld.addEntity(en);
+	testWorld.addEntity(std::move(en));
+	
 }
 
 void StatePlaying::handleEvent(sf::Event e)
