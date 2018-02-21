@@ -28,6 +28,9 @@ class _Vec2
 {
 public:
 	_Vec2()
+		:
+		x(T(0)),
+		y(T(0))
 	{}
 	_Vec2( T x,T y )
 		:
