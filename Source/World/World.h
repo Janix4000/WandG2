@@ -12,11 +12,11 @@ public:
 
 	World()
 		:
-		floor({  1280.f, 720.f + 100.f }, { 1280.f / 2.f  , 720.f / 2.f }),
+		floor({  1280.f, 720.f / 2.f + 100.f }, { 1280.f / 2.f  , 720.f / 2.f }),
 		frontCurtain(0.f),
-		midCurtain(-floor.getPosition().y),
-		backCurtain(-(floor.getPosition().y + 200.f)),
-		perspective(floor, { 0.f, 520.f })
+		midCurtain( floor.getSize().y),
+		backCurtain( floor.getSize().y + 150.f ),
+		perspective(floor, { 0.f, 360.f })
 	{
 	}
 
@@ -36,12 +36,20 @@ public:
 		{
 			applyPerspectiveToAllEntities();
 			perspective.applyToFloor();
+
+			perspective.applyTo(frontCurtain, true);
+			perspective.applyTo(midCurtain, true);
+			perspective.applyTo(backCurtain, true);
 			
 			perspectiveFactorChanger();
 		}
 		else
 		{
 			applyAbsolutePosToAllEntities();
+
+			applyAbsolutePos(frontCurtain);
+			applyAbsolutePos(midCurtain);
+			applyAbsolutePos(backCurtain);
 		}
 
 
@@ -56,12 +64,12 @@ public:
 		
 
 		floor.render(renderer);
-		//backCurtain.render(renderer);
-		//midCurtain.render(renderer);
+		backCurtain.render(renderer);
+		midCurtain.render(renderer);
 
 		renderAllEntities(renderer);
 
-		//frontCurtain.render(renderer);
+		frontCurtain.render(renderer);
 
 	}
 
@@ -218,16 +226,24 @@ private:
 
 	void handleParalax(Curtain& curtain)
 	{
-		const float height = curtain.getHeight();
-		const float yFactor = perspective.getYFactor({ 0.f, height });
+		
+		const float height = curtain.getDistance();
+		const float yFactor = perspective.getYFactor({ 0.f, -height });
 
 		float camShiftX = getCamShift().x;
+		auto& sprite = curtain.getObject();
+		const auto spritePos = sprite.getPosition();
 
-		auto& sprite = curtain.getSprite();
+		float spriteShiftX = camShiftX - camShiftX * (yFactor);
 
-		const sf::Vector2f finalSpritePos = sf::Vector2f( -camShiftX * yFactor, height * yFactor ) + floor.getPosition();
+		const sf::Vector2f finalSpritePos = sf::Vector2f( spritePos.x + spriteShiftX, spritePos.y );
 
 		sprite.setPosition(finalSpritePos);
+		
+	}
+
+	void handleTransparent(Curtain& curtain, Entity& entity)
+	{
 
 	}
 

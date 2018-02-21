@@ -135,6 +135,10 @@ void StatePlaying::update(sf::Time deltaTime)
 
 	testWorld.update(dt);
 	
+	/*
+	float debugFPS = 1.f / dt;
+	if(debugFPS < 60.f) std::cout << "Debug FPS: " << debugFPS << std::endl;
+	*/
 }
 
 void StatePlaying::fixedUpdate(sf::Time deltaTime)

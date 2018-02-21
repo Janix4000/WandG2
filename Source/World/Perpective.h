@@ -21,7 +21,7 @@ public:
 		factor = getPerspectiveFactorByRealFloorHeight(absoluteSize.y);
 	}
 
-	void applyTo(Entity& entity)
+	void applyTo(Entity& entity, bool isResize = true)
 	{
 		auto& sprite = entity.getObject();
 
@@ -31,7 +31,10 @@ public:
 		const auto perspectivePosition = getPerspectivePosition(pos, yFactor);
 
 		sprite.setPosition(perspectivePosition);
-		sprite.setScale(yFactor, yFactor);
+		if (isResize)
+		{
+			sprite.setScale(yFactor, yFactor);
+		}
 	}
 
 	void applyToFloor()

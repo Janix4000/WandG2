@@ -13,7 +13,7 @@ public:
 	{
 		setTexture(ResourceHolder::get().textures.acquire("test_hero"));
 
-		speed = 100.f;
+		speed = 200.f;
 	}
 
 	~TestHero() override = default;
@@ -34,7 +34,7 @@ public:
 	{
 		return sprite;
 	}
-	virtual const sf::Vector2f& getSize() const override
+	virtual sf::Vector2f getSize() const override
 	{
 		const auto size = texture->getSize();
 		return { float(size.x), float(size.y) };
@@ -75,6 +75,15 @@ private:
 		{
 			finalMove.x += speed;
 		}
+
+		/*
+		if (finalMove.x * finalMove.x + finalMove.y * finalMove.y > 0.f)
+		{
+			std::cout << "Debug move: x: " << finalMove.x << " y: " << finalMove.y << std::endl;
+			std::cout << "Debug pos: x: " << getPosition().x << " y: " << getPosition().y << std::endl;
+
+		}
+		*/
 
 		move(finalMove * dt);
 	}

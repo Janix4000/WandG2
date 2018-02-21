@@ -2,58 +2,65 @@
 
 #include "Floor.h"
 #include "../ResourceManager/ResourceHolder.h"
+#include "../Objects/Entity.h"
 
 class Curtain
+	:
+	public Entity
 {
 public:
-	Curtain(float height)
+	Curtain(float distance)
 		:
-		height(height), 
-		pos(0.f, height)
+		distance(distance)
 	{
+		assert(distance >= 0.f);
+		setPosition({ 0.f, -distance });
 		texture = ResourceHolder::get().textures.acquire("background2");
 		background.setTexture(*texture);
 
 		const auto textureSize = texture->getSize();
 		background.setOrigin(float(textureSize.x) / 2.f, float(textureSize.y));
+
 	}
 
-	Curtain(float height, sf::Vector2f pos)
+	Curtain(float distance, float posY)
 		:
-		Curtain(height) 
+		Curtain(distance)
 	{
-		this->pos = pos;
+		if (posY > 0.f) posY = -posY;
+
+		assert(distance >= - posY);
+		setPosition({0.f, posY});
 	}
 
-	void render(sf::RenderTarget& renderer) const
+	virtual void update(float dt) override
+	{}
+	virtual void handleEvent(sf::Event e, const sf::RenderWindow& window) override
+	{}
+	virtual void handleInput(const sf::RenderWindow& window) override
+	{}
+	virtual void render(sf::RenderTarget& renderer) const override
 	{
 		renderer.draw(background);
 	}
 
-
-
-
-	sf::Sprite& getSprite()
+	virtual sf::Transformable& getObject() override
 	{
 		return background;
 	}
-
-	float getHeight() const
+	virtual sf::Vector2f getSize() const override
 	{
-		return height;
+		const auto size = texture->getSize();
+		return { float(size.x), float(size.y) };
 	}
 
-	sf::Vector2f getPosition() const
+	float getDistance() const
 	{
-		return pos;
+		return distance;
 	}
-
-
 
 private:
-
-	sf::Vector2f pos;
-	float height;
+	float distance;
 	
 	TexturePtr texture;
 	sf::Sprite background;

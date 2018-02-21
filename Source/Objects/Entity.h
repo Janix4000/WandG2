@@ -37,7 +37,7 @@ public:
 	virtual void render(sf::RenderTarget& renderer) const = 0;
 		
 	virtual sf::Transformable& getObject() = 0;
-	virtual const sf::Vector2f& getSize() const = 0;
+	virtual sf::Vector2f getSize() const = 0;
 
 
 	void setPosition(sf::Vector2f position)
