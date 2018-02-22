@@ -28,6 +28,9 @@ class _Vec2
 {
 public:
 	_Vec2()
+		:
+		x(T(0)),
+		y(T(0))
 	{}
 	_Vec2( T x,T y )
 		:
@@ -92,6 +95,16 @@ public:
 		y *= size;
 		return *this;
 	}
+	_Vec2&	limit(T limitedLen)
+	{
+		if (getLenSq() > pow(limitedLen, 2))
+		{
+			setLen(limitedLen);
+		}
+		return *this;
+	}
+
+
 	_Vec2	operator-() const
 	{
 		return _Vec2( -x,-y );

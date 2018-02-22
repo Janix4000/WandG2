@@ -8,6 +8,8 @@
 #include "../GUI/BattleHUD.h"
 #include "../Inventory/Inventory.h"
 
+#include "../World/World.h"
+
 
 class StatePlaying : public StateBase
 {
@@ -22,7 +24,7 @@ class StatePlaying : public StateBase
 
         void fixedUpdate(sf::Time deltaTime) override;
 
-        void render(sf::RenderTarget& renderer)const	override;
+        void render(sf::RenderTarget& renderer) const override;
 
     private:
         gui::Menu testMenu;
@@ -38,7 +40,12 @@ class StatePlaying : public StateBase
 		MainHero heroTest;
 		gui::SpellMenu spellMenuTest;
 
-		Inventory::ItemObj testItemObj;
+		Inventory inv;
+
+		//Floor floor;
+		//Entity testEntity;
+
+		World testWorld;
 };
 
 #endif // STATEPLAYING_H_INCLUDED

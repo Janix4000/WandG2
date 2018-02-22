@@ -1,25 +1,64 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include "../Utility/Vec2.h"
+
+#include "Entity.h"
+
 
 class Object
+	:
+	public Entity
 {
 public:
-	Object();
 
-public:
-	void update(float dt);
-	void draw(sf::RenderTarget& rt) const;
-	void handleInput(const sf::Event& e);
+	Object()
+		:
+		Entity()
+	{
+		ID = numberOfEntities++;
+	}
 
-	void attract(Vec2 target);
+	virtual void update(float dt) = 0;
+	virtual void handleEvent(sf::Event e, const sf::RenderWindow& window) = 0;
+	virtual void handleInput(const sf::RenderWindow& window) = 0;
+	void render(sf::RenderTarget& renderer) const = 0;
+
+
+	virtual sf::Transformable& getObject() override
+	{
+		return sprite;
+	}
+	virtual sf::Vector2f getSize() const override
+	{
+		return sf::Vector2f(texture->getSize());
+	}
+
+	void setTexture(TexturePtr newTexture)
+	{
+		texture = newTexture;
+		sprite.setTexture(*texture);
+
+		const auto size = getSize();
+		sprite.setOrigin(size.x / 2.f, size.y);
+	}
+
+	sf::Sprite& getSprite()
+	{
+		return sprite;
+	}
+
+	int getID() const
+	{
+		return ID;
+	}
 
 private:
-	Vec2 pos;
-	Vec2 vel;
-	Vec2 acc;
 
-	sf::CircleShape shape;
+	TexturePtr texture;
 
-private:
+	static int numberOfEntities;
+	int ID;
+
+protected:
+	sf::Sprite sprite;
 };
+
+using ObjectPtr = std::unique_ptr<Object>;

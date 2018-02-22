@@ -5,6 +5,9 @@
 #include "../GUI/Icon.h"
 #include "../Game.h"
 
+#include "../Objects/Hero.h"
+#include "../Objects/TestFurniture.h"
+
 #include <iostream>
 
 std::string test;
@@ -15,7 +18,7 @@ StatePlaying::StatePlaying(Game& game)
 	testMenu(game.getWindow()),
 	spellMenuTest({ 300, 300 }, heroTest),
 	anotherHead(10.f),
-	testItemObj({ 10.f, 10.f })
+	inv({ 2, 2 })
 {
 	{
 		auto b = gui::make_button();
@@ -46,18 +49,38 @@ StatePlaying::StatePlaying(Game& game)
 		testMenu.addWidget(std::move(hpIcon));
 	}
 
-	heroTest.debugPrintArmor();
+	{
+		heroTest.debugPrintArmor();
 
-	heroTest.addHead(anotherHead);
+		heroTest.addHead(anotherHead);
 
-	heroTest.debugPrintArmor();
+		heroTest.debugPrintArmor();
 
-	heroTest.addHead(Armor(14));
-	heroTest.debugPrintArmor();
+		heroTest.addHead(Armor(14));
+		heroTest.debugPrintArmor();
 
-	auto item = std::make_unique<Item>();
-	item->setTexture(ResourceHolder::get().textures.acquire("test_item"));
-	testItemObj.applyItem(std::move(item));
+
+		auto item = std::make_unique<Item>();
+		item->setTexture(ResourceHolder::get().textures.acquire("test_item"));
+		inv.addItem(std::move(item));
+
+		auto item1 = std::make_unique<Item>();
+		item1->setTexture(ResourceHolder::get().textures.acquire("test_item1"));
+		inv.addItem(std::move(item1));
+
+		auto item2 = std::make_unique<Item>();
+		item2->setTexture(ResourceHolder::get().textures.acquire("test_item2"));
+		inv.addItem(std::move(item2));
+	}
+
+	
+	auto en = makeTestHero();
+
+	testWorld.addObject(std::move(en));
+
+	auto furn = std::make_unique<TestFurniture>();
+	testWorld.addObject(std::move(furn));
+
 }
 
 void StatePlaying::handleEvent(sf::Event e)
@@ -69,7 +92,9 @@ void StatePlaying::handleEvent(sf::Event e)
 
 	spellMenuTest.handleEvent(e, gamePtr->getWindow());
 
-	testItemObj.handleEvent(e, gamePtr->getWindow());
+	inv.handleEvent(e, gamePtr->getWindow());
+
+	testWorld.handleEvent(e, gamePtr->getWindow());
 
 	if (e.type == sf::Event::KeyPressed)
 	{
@@ -86,22 +111,39 @@ void StatePlaying::handleEvent(sf::Event e)
 
 void StatePlaying::handleInput()
 {
-	testItemObj.handleInput(gamePtr->getWindow());
+	inv.handleInput(gamePtr->getWindow());
+
+	
 }
 
 void StatePlaying::update(sf::Time deltaTime)
 {
+	float dt = deltaTime.asSeconds();
+
 	if (!hidden)
 	{
-		testMenu.update(deltaTime.asSeconds());
+		testMenu.update(dt);
 	}
-	spellMenuTest.update(deltaTime.asSeconds());
+	spellMenuTest.update(dt);
 
-	testItemObj.update(deltaTime.asSeconds());
+	inv.update(dt);
 
 
-	hp -= 0.07f;
-	if (hp < 0.f) hp = maxHP;
+	hp -= 0.17f;
+
+	if (hp < 0.f)
+	{
+		hp = maxHP;
+	}
+
+	sf::Vector2i mousePos = sf::Mouse::getPosition(gamePtr->getWindow());
+
+	testWorld.update(dt);
+	
+	/*
+	float debugFPS = 1.f / dt;
+	if(debugFPS < 60.f) std::cout << "Debug FPS: " << debugFPS << std::endl;
+	*/
 }
 
 void StatePlaying::fixedUpdate(sf::Time deltaTime)
@@ -116,8 +158,9 @@ void StatePlaying::render(sf::RenderTarget& renderer) const
 		testMenu.render(renderer);
 	}
 
-
-	testItemObj.render(renderer);
+	inv.render(renderer);
 
 	spellMenuTest.render(renderer);
+
+	testWorld.render(renderer);
 }

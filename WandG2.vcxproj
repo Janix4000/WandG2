@@ -39,6 +39,7 @@
     <ClInclude Include="Source\Armor\Armor.h" />
     <ClInclude Include="Source\Characters\Hero\Hero.h" />
     <ClInclude Include="Source\Game.h" />
+    <ClInclude Include="Source\GUI\Bar.h" />
     <ClInclude Include="Source\GUI\BattleHUD.h" />
     <ClInclude Include="Source\GUI\Button.h" />
     <ClInclude Include="Source\GUI\Icon.h" />
@@ -47,20 +48,33 @@
     <ClInclude Include="Source\GUI\StackMenu.h" />
     <ClInclude Include="Source\GUI\Textbox.h" />
     <ClInclude Include="Source\GUI\Widget.h" />
+    <ClInclude Include="Source\Intelligence\FollowingBehavior.h" />
     <ClInclude Include="Source\Inventory\Inventory.h" />
     <ClInclude Include="Source\Inventory\Items\Item.h" />
+    <ClInclude Include="Source\Inventory\Slot.h" />
+    <ClInclude Include="Source\Objects\Entity.h" />
+    <ClInclude Include="Source\Objects\FreePhysic.h" />
+    <ClInclude Include="Source\Objects\Hero.h" />
     <ClInclude Include="Source\Objects\Object.h" />
     <ClInclude Include="Source\Objects\Projectile.h" />
+    <ClInclude Include="Source\Objects\TestFurniture.h" />
     <ClInclude Include="Source\ResourceManager\ResourceHolder.h" />
     <ClInclude Include="Source\ResourceManager\ResourceManager.h" />
     <ClInclude Include="Source\Spells\Effect.h" />
     <ClInclude Include="Source\Spells\SpellBase.h" />
     <ClInclude Include="Source\States\StateBase.h" />
     <ClInclude Include="Source\States\StatePlaying.h" />
+    <ClInclude Include="Source\States\StateTest.h" />
     <ClInclude Include="Source\Utility\Animation.h" />
     <ClInclude Include="Source\Utility\ChilliMath.h" />
+    <ClInclude Include="Source\Utility\Random.h" />
     <ClInclude Include="Source\Utility\Vec2.h" />
     <ClInclude Include="Source\Utility\Vec3.h" />
+    <ClInclude Include="Source\World\Camera.h" />
+    <ClInclude Include="Source\World\Curtain.h" />
+    <ClInclude Include="Source\World\Floor.h" />
+    <ClInclude Include="Source\World\Perpective.h" />
+    <ClInclude Include="Source\World\World.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
