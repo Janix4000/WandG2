@@ -24,13 +24,15 @@ public:
 	{
 		entities.emplace_back(std::move(entity));
 
-		indexOfFollowedEntity = entities.size() - 1;
+		setCameraTarget(entities.size() - 1);
 	}
 
 	void update(float dt)
 	{
 		updateAllEntities(dt);
 		handleBoundingForAllEntities();
+
+		mainCamera.update(dt);
 
 		if (isPerspectiveHandled)
 		{
@@ -52,7 +54,7 @@ public:
 			applyAbsolutePos(backCurtain);
 		}
 
-		handleTransparency(frontCurtain, *entities[indexOfFollowedEntity]);
+		frontCurtain.handleTransparency(*entities[indexOfFollowedEntity]);
 
 		handleCameraFollowing();
 		handleCurtainsParalax();
@@ -110,6 +112,24 @@ private:
 
 			mainCamera.setPosition({ (targetPos + floorPos).x, floorPos.y - 720.f / 2.f });
 		}
+		else
+		{
+			mainCamera.free();
+		}
+	}
+
+	void setCameraTarget(size_t index)
+	{
+		if (index != indexOfFollowedEntity)
+		{
+			mainCamera.free();
+			indexOfFollowedEntity = index;
+		}
+	}
+
+	sf::Vector2f getCamShift() const
+	{
+		return mainCamera.getPosition() - floor.getPosition();
 	}
 
 	Floor floor;
@@ -241,51 +261,6 @@ private:
 
 		sprite.setPosition(finalSpritePos);
 		
-	}
-
-	void handleTransparency(Curtain& curtain, Entity& entity)
-	{
-		const float minTrans = 100.f;
-		const float maxTrans = 255.f;
-
-
-		const auto entityScaleY = entity.getObject().getScale().y;
-		const auto curtainScaleY = curtain.getObject().getScale().y;
-
-		const float entityPosY = entity.getPosition().y * entityScaleY;
-		const float cT = curtain.getPosition().y - curtain.getSize().y * curtainScaleY;
-		const float cB = curtain.getPosition().y * curtainScaleY;
-		
-		float trans;
-
-		if (entityPosY >= cT && entityPosY <= cB)
-		{
-			const float edgeOfTrans = cT + entity.getSize().y * entityScaleY;
-			if (entityPosY < edgeOfTrans)
-			{
-				trans = map(entityPosY, edgeOfTrans, cT, minTrans, maxTrans);
-			}
-			else
-			{
-				trans = minTrans;
-			}
-		}
-		else
-		{
-			trans = maxTrans;
-		}
-
-		auto& sprite = curtain.getSprite();
-
-		const int iTrans = int(trans);
-
-		sprite.setColor( sf::Color(iTrans, iTrans, iTrans, iTrans) );
-
-	}
-
-	sf::Vector2f getCamShift() const
-	{
-		return mainCamera.getPosition() - floor.getPosition();
 	}
 
 };

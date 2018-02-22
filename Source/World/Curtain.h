@@ -67,11 +67,47 @@ public:
 	void setTexture(TexturePtr newTexture)
 	{
 		texture = newTexture;
-		texture->setSmooth(true);
+		//texture->setSmooth(true);
 		background.setTexture(*texture);
 
 		sf::Vector2f size = { float(texture->getSize().x), float(texture->getSize().y) };
 		background.setOrigin(size.x / 2.f, size.y);
+	}
+
+	void handleTransparency(Entity& entity)
+	{
+		const auto entityScaleY = entity.getObject().getScale().y;
+		const auto curtainScaleY = getObject().getScale().y;
+
+		const float entityPosY = entity.getPosition().y * entityScaleY;
+		const float cT = getPosition().y - getSize().y * curtainScaleY;
+		const float cB = getPosition().y * curtainScaleY;
+
+		float trans;
+
+		if (entityPosY >= cT && entityPosY <= cB)
+		{
+			const float edgeOfTrans = cT + entity.getSize().y * entityScaleY;
+			if (entityPosY < edgeOfTrans)
+			{
+				trans = map(entityPosY, edgeOfTrans, cT, minTrans, maxTrans);
+			}
+			else
+			{
+				trans = minTrans;
+			}
+		}
+		else
+		{
+			trans = maxTrans;
+		}
+
+		auto& sprite = getSprite();
+
+		const int iTrans = int(trans);
+
+		sprite.setColor(sf::Color(iTrans, iTrans, iTrans, iTrans));
+
 	}
 
 private:
@@ -79,4 +115,7 @@ private:
 	
 	TexturePtr texture;
 	sf::Sprite background;
+
+	const float minTrans = 100.f;
+	const float maxTrans = 255.f;
 };
