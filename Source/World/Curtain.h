@@ -59,6 +59,21 @@ public:
 		return distance;
 	}
 
+	sf::Sprite& getSprite()
+	{
+		return background;
+	}
+
+	void setTexture(TexturePtr newTexture)
+	{
+		texture = newTexture;
+		texture->setSmooth(true);
+		background.setTexture(*texture);
+
+		sf::Vector2f size = { float(texture->getSize().x), float(texture->getSize().y) };
+		background.setOrigin(size.x / 2.f, size.y);
+	}
+
 private:
 	float distance;
 	

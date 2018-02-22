@@ -52,6 +52,7 @@ public:
 			applyAbsolutePos(backCurtain);
 		}
 
+		handleTransparency(frontCurtain, *entities[indexOfFollowedEntity]);
 
 		handleCameraFollowing();
 		handleCurtainsParalax();
@@ -242,8 +243,43 @@ private:
 		
 	}
 
-	void handleTransparent(Curtain& curtain, Entity& entity)
+	void handleTransparency(Curtain& curtain, Entity& entity)
 	{
+		const float minTrans = 100.f;
+		const float maxTrans = 255.f;
+
+
+		const auto entityScaleY = entity.getObject().getScale().y;
+		const auto curtainScaleY = curtain.getObject().getScale().y;
+
+		const float entityPosY = entity.getPosition().y * entityScaleY;
+		const float cT = curtain.getPosition().y - curtain.getSize().y * curtainScaleY;
+		const float cB = curtain.getPosition().y * curtainScaleY;
+		
+		float trans;
+
+		if (entityPosY >= cT && entityPosY <= cB)
+		{
+			const float edgeOfTrans = cT + entity.getSize().y * entityScaleY;
+			if (entityPosY < edgeOfTrans)
+			{
+				trans = map(entityPosY, edgeOfTrans, cT, minTrans, maxTrans);
+			}
+			else
+			{
+				trans = minTrans;
+			}
+		}
+		else
+		{
+			trans = maxTrans;
+		}
+
+		auto& sprite = curtain.getSprite();
+
+		const int iTrans = int(trans);
+
+		sprite.setColor( sf::Color(iTrans, iTrans, iTrans, iTrans) );
 
 	}
 
