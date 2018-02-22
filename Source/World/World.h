@@ -12,7 +12,7 @@ public:
 
 	World()
 		:
-		floor({  1280.f, 720.f / 2.f + 100.f }, { 1280.f / 2.f  , 720.f / 2.f }),
+		floor({  2.f * 1280.f, 720.f / 2.f + 100.f }, { 1280.f / 2.f  , 720.f / 2.f }),
 		frontCurtain(0.f),
 		midCurtain( floor.getSize().y),
 		backCurtain( floor.getSize().y + 150.f ),
@@ -82,6 +82,9 @@ public:
 
 		//floor.setPos({ float(mousePos.x), float(mousePos.y) }); 
 
+		debugCameraSwitch(e);
+
+
 		switch (e.type)
 		{
 		case sf::Event::KeyPressed:
@@ -101,6 +104,7 @@ public:
 private:
 
 	Camera mainCamera;
+	size_t indexOfFollowedEntity = -1;
 
 	void handleCameraFollowing()
 	{
@@ -132,14 +136,10 @@ private:
 		return mainCamera.getPosition() - floor.getPosition();
 	}
 
+
 	Floor floor;
 
 	Perspective perspective;
-
-	size_t indexOfFollowedEntity = -1;
-
-	std::vector<EntityPtr> entities;
-
 	bool isPerspectiveHandled = true;
 
 	void switchPerspectiveHandling()
@@ -161,6 +161,9 @@ private:
 		}
 	}
 
+
+	std::vector<EntityPtr> entities;
+
 	void updateAllEntities(float dt)
 	{
 		for (auto& entity : entities)
@@ -168,6 +171,20 @@ private:
 			entity->update(dt);
 		}
 	}
+
+	Entity& getEntityByID(int ID)
+	{
+		auto found = std::find_if(entities.begin(), entities.end(), [&](const auto& entity) {
+			return entity->getID() == ID;
+		});
+
+		assert(found != entities.end());
+
+		return **found;
+	}
+
+	void sortAllEntitiesByDist()
+	{}
 
 	void applyPerspectiveToAllEntities()
 	{
@@ -177,7 +194,6 @@ private:
 		}
 	}
 
-
 	void applyAbsolutePosToAllEntities()
 	{
 		for (auto& entity : entities)
@@ -185,7 +201,6 @@ private:
 			applyAbsolutePos(*entity);
 		}
 	}
-
 	void applyAbsolutePos(Entity& entity)
 	{
 		auto& sprite = entity.getObject();
@@ -194,7 +209,6 @@ private:
 
 		sprite.setPosition(absPos);
 	}
-
 	sf::Vector2f getAbsoloutePos(const Entity& entity)
 	{
 		return entity.getPosition() + floor.getPosition();;
@@ -261,6 +275,23 @@ private:
 
 		sprite.setPosition(finalSpritePos);
 		
+	}
+
+
+	void debugCameraSwitch(sf::Event e)
+	{
+		if (e.type == sf::Event::KeyPressed)
+		{
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+			{
+				size_t newIndex = indexOfFollowedEntity + 1;
+				if (newIndex == entities.size())
+				{
+					newIndex = 0u;
+				}
+				setCameraTarget(newIndex);
+			}
+		}
 	}
 
 };

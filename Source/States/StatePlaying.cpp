@@ -4,7 +4,9 @@
 #include "../GUI/Textbox.h"
 #include "../GUI/Icon.h"
 #include "../Game.h"
+
 #include "../Objects/Hero.h"
+#include "../Objects/TestFurniture.h"
 
 #include <iostream>
 
@@ -75,7 +77,10 @@ StatePlaying::StatePlaying(Game& game)
 	auto en = makeTestHero();
 
 	testWorld.addEntity(std::move(en));
-	
+
+	auto furn = std::make_unique<TestFurniture>();
+	testWorld.addEntity(std::move(furn));
+
 }
 
 void StatePlaying::handleEvent(sf::Event e)

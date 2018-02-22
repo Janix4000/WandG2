@@ -29,6 +29,7 @@
     <ClCompile Include="Source\GUI\Textbox.cpp" />
     <ClCompile Include="Source\GUI\Widget.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Objects\Entity.cpp" />
     <ClCompile Include="Source\Objects\Object.cpp" />
     <ClCompile Include="Source\Objects\Projectile.cpp" />
     <ClCompile Include="Source\Spells\SpellBase.cpp" />
@@ -57,6 +58,7 @@
     <ClInclude Include="Source\Objects\Hero.h" />
     <ClInclude Include="Source\Objects\Object.h" />
     <ClInclude Include="Source\Objects\Projectile.h" />
+    <ClInclude Include="Source\Objects\TestFurniture.h" />
     <ClInclude Include="Source\ResourceManager\ResourceHolder.h" />
     <ClInclude Include="Source\ResourceManager\ResourceManager.h" />
     <ClInclude Include="Source\Spells\Effect.h" />
@@ -66,6 +68,7 @@
     <ClInclude Include="Source\States\StateTest.h" />
     <ClInclude Include="Source\Utility\Animation.h" />
     <ClInclude Include="Source\Utility\ChilliMath.h" />
+    <ClInclude Include="Source\Utility\Random.h" />
     <ClInclude Include="Source\Utility\Vec2.h" />
     <ClInclude Include="Source\Utility\Vec3.h" />
     <ClInclude Include="Source\World\Camera.h" />

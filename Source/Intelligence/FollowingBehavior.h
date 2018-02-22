@@ -159,14 +159,14 @@ private:
 	{
 		const float dist = getDistToTarget(objPhysic);
 
-		float d = (dt / holdTime) * dist;
+		float d = (dist / holdTime);
 		holdTime -= dt;
 
 		auto newVel = target - objPhysic.pos;
 
 		newVel.setLen(d);
-		objPhysic.pos += newVel;
-		objPhysic.vel *= 0.f;
+		objPhysic.vel = newVel;
+
 		objPhysic.acc *= 0.f;
 	}
 

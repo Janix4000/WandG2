@@ -27,6 +27,7 @@ public:
 	Entity()
 	{
 		setPosition({0.f, -1.f });
+		ID = numberOfEntities++;
 	}
 
 	virtual ~Entity() = default;
@@ -52,10 +53,19 @@ public:
 	{
 		setPosition(getPosition() + shift);
 	}
+
+	int getID() const
+	{
+		return ID;
+	}
 	
+private:
+	static int numberOfEntities;
+	int ID;
 
 protected:
 	
 };
+
 
 using EntityPtr = std::unique_ptr<Entity>;

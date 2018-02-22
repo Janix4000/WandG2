@@ -60,6 +60,9 @@
     <ClCompile Include="Source\Characters\Hero\Hero.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Objects\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Objects\Object.h">
@@ -171,6 +174,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Objects\FreePhysic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Objects\TestFurniture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Utility\Random.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
