@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Entity.h"
+#include "Object.h"
 
 class TestHero
 	:
-	public Entity
+	public Object
 {
 public:
 	TestHero()
 		:
-		Entity()
+		Object()
 	{
 		setTexture(ResourceHolder::get().textures.acquire("test_hero"));
 
@@ -22,36 +22,19 @@ public:
 	{
 		handleMovement(dt);
 	}
-	virtual void handleEvent(sf::Event e, const sf::RenderWindow& window) override
-	{}
-	virtual void handleInput(const sf::RenderWindow& window) override
-	{}
+
 	virtual void render(sf::RenderTarget& renderer) const override
 	{
 		renderer.draw(sprite);
 	}
-	virtual sf::Transformable& getObject() override
-	{
-		return sprite;
-	}
-	virtual sf::Vector2f getSize() const override
-	{
-		const auto size = texture->getSize();
-		return { float(size.x), float(size.y) };
-	}
 
-	void setTexture(TexturePtr newTexture)
-	{
-		texture = newTexture;
-		sprite.setTexture(*texture);
+	virtual void handleEvent(sf::Event e, const sf::RenderWindow& window) override
+	{}
 
-		sf::Vector2f size = { float(texture->getSize().x), float(texture->getSize().y) };
-		sprite.setOrigin(size.x / 2.f, size.y);
-	}
+	virtual void handleInput(const sf::RenderWindow& window) override
+	{}
 
 private:
-	TexturePtr texture;
-	sf::Sprite sprite;
 
 	float speed = 20.f;
 
@@ -88,12 +71,10 @@ private:
 		move(finalMove * dt);
 	}
 
-	
-	
 };
 
 
-inline EntityPtr makeTestHero()
+inline ObjectPtr makeTestHero()
 {
 	return std::make_unique<TestHero>();
 }

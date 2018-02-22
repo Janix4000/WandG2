@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Entity.h"
+#include "Object.h"
 #include "../Utility/Random.h"
 
 class TestFurniture
 	:
-	public Entity
+	public Object
 {
 public:
 	TestFurniture()
@@ -23,28 +23,8 @@ public:
 	{}
 	virtual void render(sf::RenderTarget& renderer) const override
 	{
-		renderer.draw(shelf);
-	}
-
-	virtual sf::Transformable& getObject() override
-	{
-		return shelf;
-	}
-	virtual sf::Vector2f getSize() const override
-	{
-		return sf::Vector2f(texture->getSize());
-	}
-
-	void setTexture(TexturePtr newTexture)
-	{
-		texture = newTexture;
-		shelf.setTexture(*texture);
-
-		sf::Vector2f size = { float(texture->getSize().x), float(texture->getSize().y) };
-		shelf.setOrigin(size.x / 2.f, size.y);
+		renderer.draw(sprite);
 	}
 
 private:
-	sf::Sprite shelf;
-	TexturePtr texture;
 };

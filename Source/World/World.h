@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Objects/Entity.h"
+#include "../Objects/Object.h"
 #include "Floor.h"
 #include "Camera.h"
 #include "Curtain.h"
@@ -20,23 +20,23 @@ public:
 	{
 	}
 
-	void addEntity(EntityPtr entity)
+	void addObject(ObjectPtr object)
 	{
-		entities.emplace_back(std::move(entity));
+		objects.emplace_back(std::move(object));
 
-		setCameraTarget(entities.size() - 1);
+		setCameraTarget(int(objects.size() - 1));
 	}
 
 	void update(float dt)
 	{
-		updateAllEntities(dt);
-		handleBoundingForAllEntities();
+		updateAllObjects(dt);
+		handleBoundingForAllObjects();
 
 		mainCamera.update(dt);
 
 		if (isPerspectiveHandled)
 		{
-			applyPerspectiveToAllEntities();
+			applyPerspectiveToAllObjects();
 			perspective.applyToFloor();
 
 			perspective.applyTo(frontCurtain, true);
@@ -47,17 +47,19 @@ public:
 		}
 		else
 		{
-			applyAbsolutePosToAllEntities();
+			applyAbsolutePosToAllObjects();
 
 			applyAbsolutePos(frontCurtain);
 			applyAbsolutePos(midCurtain);
 			applyAbsolutePos(backCurtain);
 		}
 
-		frontCurtain.handleTransparency(*entities[indexOfFollowedEntity]);
+		frontCurtain.handleTransparency(getObjectByID(followedObjectID));
 
 		handleCameraFollowing();
 		handleCurtainsParalax();
+
+		sortAllObjectsByDist();
 	}
 
 	void render(sf::RenderTarget& renderer) const
@@ -70,7 +72,7 @@ public:
 		backCurtain.render(renderer);
 		midCurtain.render(renderer);
 
-		renderAllEntities(renderer);
+		renderAllObjects(renderer);
 
 		frontCurtain.render(renderer);
 
@@ -104,13 +106,13 @@ public:
 private:
 
 	Camera mainCamera;
-	size_t indexOfFollowedEntity = -1;
+	int followedObjectID = -1;
 
 	void handleCameraFollowing()
 	{
-		if (indexOfFollowedEntity != -1)
+		if (followedObjectID != -1)
 		{
-			const auto targetPos = entities[indexOfFollowedEntity]->getPosition();
+			const auto targetPos = getObjectByID(followedObjectID).getPosition();
 
 			const auto floorPos = floor.getPosition();
 
@@ -122,12 +124,12 @@ private:
 		}
 	}
 
-	void setCameraTarget(size_t index)
+	void setCameraTarget(int ID)
 	{
-		if (index != indexOfFollowedEntity)
+		if (ID != followedObjectID)
 		{
 			mainCamera.free();
-			indexOfFollowedEntity = index;
+			followedObjectID = ID;
 		}
 	}
 
@@ -148,57 +150,64 @@ private:
 
 		if (!isPerspectiveHandled)
 		{
-			removePerspectiveFromAllEntities();
+			removePerspectiveFromAllObjects();
 			perspective.removeFromFloor();
 		}
 	}
 
-	void removePerspectiveFromAllEntities()
+	void removePerspectiveFromAllObjects()
 	{
-		for (auto& entity : entities)
+		for (auto& object : objects)
 		{
-			perspective.removeFrom(*entity);
+			perspective.removeFrom(*object);
 		}
 	}
 
 
-	std::vector<EntityPtr> entities;
+	std::vector<ObjectPtr> objects;
 
-	void updateAllEntities(float dt)
+	void updateAllObjects(float dt)
 	{
-		for (auto& entity : entities)
+		for (auto& object : objects)
 		{
-			entity->update(dt);
+			object->update(dt);
 		}
 	}
 
-	Entity& getEntityByID(int ID)
+	Object& getObjectByID(int ID)
 	{
-		auto found = std::find_if(entities.begin(), entities.end(), [&](const auto& entity) {
-			return entity->getID() == ID;
+		auto found = std::find_if(objects.begin(), objects.end(), [&](const auto& object) {
+			return object->getID() == ID;
 		});
 
-		assert(found != entities.end());
+		assert(found != objects.end());
 
 		return **found;
 	}
 
-	void sortAllEntitiesByDist()
-	{}
-
-	void applyPerspectiveToAllEntities()
+	void sortAllObjectsByDist()
 	{
-		for (auto& entity : entities)
+		const auto isFurther = [](ObjectPtr& lhs, ObjectPtr& rhs) {
+
+			return lhs->getPosition().y < rhs->getPosition().y;
+		};
+
+		std::sort(objects.begin(), objects.end(), isFurther);
+	}
+
+	void applyPerspectiveToAllObjects()
+	{
+		for (auto& object : objects)
 		{
-			perspective.applyTo(*entity);
+			perspective.applyTo(*object);
 		}
 	}
 
-	void applyAbsolutePosToAllEntities()
+	void applyAbsolutePosToAllObjects()
 	{
-		for (auto& entity : entities)
+		for (auto& object : objects)
 		{
-			applyAbsolutePos(*entity);
+			applyAbsolutePos(*object);
 		}
 	}
 	void applyAbsolutePos(Entity& entity)
@@ -215,20 +224,20 @@ private:
 	}
 
 
-	void renderAllEntities(sf::RenderTarget& renderer) const
+	void renderAllObjects(sf::RenderTarget& renderer) const
 	{
-		for (auto& entity : entities)
+		for (auto& object : objects)
 		{
-			entity->render(renderer);
+			object->render(renderer);
 		}
 	}
 
 
-	void handleBoundingForAllEntities()
+	void handleBoundingForAllObjects()
 	{
-		for (auto& entity : entities)
+		for (auto& object : objects)
 		{
-			floor.handleBounding(*entity);
+			floor.handleBounding(*object);
 		}
 	}
 
@@ -284,12 +293,12 @@ private:
 		{
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 			{
-				size_t newIndex = indexOfFollowedEntity + 1;
-				if (newIndex == entities.size())
+				int newID = followedObjectID + 1;
+				if (newID == objects.size())
 				{
-					newIndex = 0u;
+					newID = 0;
 				}
-				setCameraTarget(newIndex);
+				setCameraTarget(newID);
 			}
 		}
 	}

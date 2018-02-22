@@ -7,7 +7,7 @@ public:
 
 	FollowingBehavior()
 	{
-		maxSpeed = 300.f;
+		maxSpeed = 350.f;
 		maxAcc = maxSpeed;
 
 		retardationDist = 400.f;

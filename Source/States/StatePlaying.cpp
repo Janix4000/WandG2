@@ -76,10 +76,10 @@ StatePlaying::StatePlaying(Game& game)
 	
 	auto en = makeTestHero();
 
-	testWorld.addEntity(std::move(en));
+	testWorld.addObject(std::move(en));
 
 	auto furn = std::make_unique<TestFurniture>();
-	testWorld.addEntity(std::move(furn));
+	testWorld.addObject(std::move(furn));
 
 }
 

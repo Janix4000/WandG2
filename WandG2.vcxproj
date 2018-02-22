@@ -29,7 +29,6 @@
     <ClCompile Include="Source\GUI\Textbox.cpp" />
     <ClCompile Include="Source\GUI\Widget.cpp" />
     <ClCompile Include="Source\Main.cpp" />
-    <ClCompile Include="Source\Objects\Entity.cpp" />
     <ClCompile Include="Source\Objects\Object.cpp" />
     <ClCompile Include="Source\Objects\Projectile.cpp" />
     <ClCompile Include="Source\Spells\SpellBase.cpp" />

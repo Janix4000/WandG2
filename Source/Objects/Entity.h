@@ -27,8 +27,13 @@ public:
 	Entity()
 	{
 		setPosition({0.f, -1.f });
-		ID = numberOfEntities++;
 	}
+
+	Entity(const Entity& rhs) = delete;
+	Entity& operator=(const Entity& rhs) = delete;
+
+	Entity(Entity&& rhs) = delete;
+	Entity& operator=(Entity&& rhs) = delete;
 
 	virtual ~Entity() = default;
 
@@ -54,18 +59,10 @@ public:
 		setPosition(getPosition() + shift);
 	}
 
-	int getID() const
-	{
-		return ID;
-	}
-	
 private:
-	static int numberOfEntities;
-	int ID;
 
 protected:
 	
 };
 
 
-using EntityPtr = std::unique_ptr<Entity>;
