@@ -26,7 +26,7 @@ public:
 
 	Entity()
 	{
-		setPosition({0.f, 0.f });
+		setPosition({0.f, -1.f });
 	}
 
 	virtual ~Entity() = default;

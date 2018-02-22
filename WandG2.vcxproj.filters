@@ -167,5 +167,11 @@
     <ClInclude Include="Source\Objects\Hero.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Intelligence\FollowingBehavior.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Objects\FreePhysic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
