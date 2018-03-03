@@ -8,16 +8,17 @@ namespace gui
 
 	Menu::Menu(const sf::RenderWindow & window, MenuOrientation orient)
 		:
-		Menu({ float(window.getSize().x / 2), 20.f }, orient)
+		Menu({ float(window.getSize().x / 2), 20.f }, orient, window.getSize())
 	{
 	}
 
-	Menu::Menu(const sf::Vector2f & position, MenuOrientation orient)
+	Menu::Menu(const sf::Vector2f & position, MenuOrientation orient, sf::Vector2u winSize)
 		:
 		menuOrient(orient),
 		position(position),
 		basePosition(position + sf::Vector2f{padding, padding}),
-		baseSize(padding, padding)
+		baseSize(padding, padding),
+		view(sf::Vector2f(winSize/2u), sf::Vector2f(winSize))
 	{
 		background.setFillColor({ 100, 100, 100, 128 });
 		background.setSize(baseSize);
@@ -61,6 +62,7 @@ namespace gui
 
 	void Menu::render(sf::RenderTarget & renderer) const
 	{
+		renderer.setView(view);
 		renderer.draw(background);
 		for (auto& widget : widgets)
 		{

@@ -21,24 +21,22 @@ StatePlaying::StatePlaying(Game& game)
 	inv({ 2, 2 })
 {
 	{
-		auto b = gui::make_button();
-		b->setTexture(ResourceHolder::get().textures.acquire("button1"));
-		b->setText("Start");
-		b->setFunction([&]() mutable {
+		auto f = [&]() mutable {
 			std::cout << testString << '\n';
 			clicked = !clicked;
-		});
+		};
+		addButton("Print", f);
 
-		testMenu.addWidget(std::move(b));
+		auto hide = [&]() {
+			guiIsHidden = !guiIsHidden;
+		};
+		addButton("Hide", hide);
 
-		auto b2 = gui::make_button();
-		b2->setTexture(ResourceHolder::get().textures.acquire("button1"));
-		b2->setText("Exit");
-		b2->setFunction([&]() mutable {
+		auto exit = [&]() {
 			game.close();
-		});
+		};
 
-		testMenu.addWidget(std::move(b2));
+		addButton("Exit", exit);
 
 		auto textBox = std::make_unique<gui::TextBox>(testString);
 		testMenu.addWidget(std::move(textBox));
@@ -60,39 +58,36 @@ StatePlaying::StatePlaying(Game& game)
 		heroTest.debugPrintArmor();
 
 
-		auto item = std::make_unique<Item>();
-		item->setTexture(ResourceHolder::get().textures.acquire("test_item"));
+		auto item = makeItem();
+		item->setTexture("test_item");
 		inv.addItem(std::move(item));
 
-		auto item1 = std::make_unique<Item>();
-		item1->setTexture(ResourceHolder::get().textures.acquire("test_item1"));
+		auto item1 = makeItem();
+		item1->setTexture("test_item1");
 		inv.addItem(std::move(item1));
 
-		auto item2 = std::make_unique<Item>();
-		item2->setTexture(ResourceHolder::get().textures.acquire("test_item2"));
+		auto item2 = makeItem();
+		item2->setTexture("test_item2");
 		inv.addItem(std::move(item2));
 	}
 
-	
-	auto en = makeTestHero();
-
-	testWorld.addObject(std::move(en));
 
 	auto furn = std::make_unique<TestFurniture>();
 	testWorld.addObject(std::move(furn));
+
+	auto en = makeTestHero();
+	testWorld.addObject(std::move(en));
 
 }
 
 void StatePlaying::handleEvent(sf::Event e)
 {
-	if (!hidden)
+	if (!guiIsHidden)
 	{
 		testMenu.handleEvent(e, gamePtr->getWindow());
+		spellMenuTest.handleEvent(e, gamePtr->getWindow());
+		inv.handleEvent(e, gamePtr->getWindow());
 	}
-
-	spellMenuTest.handleEvent(e, gamePtr->getWindow());
-
-	inv.handleEvent(e, gamePtr->getWindow());
 
 	testWorld.handleEvent(e, gamePtr->getWindow());
 
@@ -101,7 +96,7 @@ void StatePlaying::handleEvent(sf::Event e)
 		switch (e.key.code)
 		{
 		case sf::Keyboard::Escape:
-			hidden = !hidden;
+			guiIsHidden = !guiIsHidden;
 			break;
 		default:
 			break;
@@ -111,26 +106,25 @@ void StatePlaying::handleEvent(sf::Event e)
 
 void StatePlaying::handleInput()
 {
-	inv.handleInput(gamePtr->getWindow());
+	if (!guiIsHidden)
+	{
+		inv.handleInput(gamePtr->getWindow());
 
-	
+	}
 }
 
 void StatePlaying::update(sf::Time deltaTime)
 {
 	float dt = deltaTime.asSeconds();
 
-	if (!hidden)
+	if (!guiIsHidden)
 	{
 		testMenu.update(dt);
+		spellMenuTest.update(dt);
+		inv.update(dt);
 	}
-	spellMenuTest.update(dt);
-
-	inv.update(dt);
-
-
+	
 	hp -= 0.17f;
-
 	if (hp < 0.f)
 	{
 		hp = maxHP;
@@ -153,14 +147,15 @@ void StatePlaying::fixedUpdate(sf::Time deltaTime)
 
 void StatePlaying::render(sf::RenderTarget& renderer) const
 {
-	if (!hidden)
+	testWorld.render(renderer);
+
+
+	if (!guiIsHidden)
 	{
 		testMenu.render(renderer);
+		spellMenuTest.render(renderer);
+		inv.render(renderer);
 	}
-
-	inv.render(renderer);
-
-	spellMenuTest.render(renderer);
-
-	testWorld.render(renderer);
+	
+	
 }

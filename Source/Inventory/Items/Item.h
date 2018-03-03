@@ -24,6 +24,12 @@ public:
 		return texture;
 	}
 
+	void setTexture(const std::string& textureName)
+	{
+		auto t = ResourceHolder::get().textures.acquire(textureName);
+		setTexture(t);
+	}
+
 	void setTexture(TexturePtr t)
 	{
 		texture = t;
@@ -52,3 +58,8 @@ private:
 };
 
 using ItemPtr = std::unique_ptr<Item>;
+
+inline ItemPtr makeItem()
+{
+	return std::make_unique<Item>();
+}

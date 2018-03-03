@@ -1,6 +1,9 @@
 #ifndef GAME_H_INCLUDED
 #define GAME_H_INCLUDED
 
+#define WIN_WIDTH 1280
+#define WIN_HEIGHT 720
+
 #include <memory>
 #include <vector>
 #include <SFML/Graphics.hpp>

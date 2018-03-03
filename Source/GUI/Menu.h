@@ -24,7 +24,7 @@ namespace gui
 
 	public:
 		Menu(const sf::RenderWindow& window, MenuOrientation orient = MenuOrientation::Vertical);
-		Menu(const sf::Vector2f& position, MenuOrientation orient = MenuOrientation::Vertical);
+		Menu(const sf::Vector2f& position, MenuOrientation orient = MenuOrientation::Vertical, sf::Vector2u winSize = { 1280, 720 });
 
 		Menu(Menu&& other);
 		Menu& operator =(Menu&& other);
@@ -51,5 +51,7 @@ namespace gui
 		sf::Vector2f basePosition;
 		sf::Vector2f baseSize;
 
+
+		sf::View view;
 	};
 }

@@ -1,6 +1,7 @@
 #ifndef STATEPLAYING_H_INCLUDED
 #define STATEPLAYING_H_INCLUDED
 
+
 #include "StateBase.h"
 #include "../GUI/StackMenu.h"
 #include "../GUI/Menu.h"
@@ -31,7 +32,7 @@ class StatePlaying : public StateBase
 		std::string testString = "bg";
 		bool clicked = false;
 
-		bool hidden = false;
+		bool guiIsHidden = false;
 
 		float maxHP = 50;
 		float hp = maxHP;
@@ -46,6 +47,18 @@ class StatePlaying : public StateBase
 		//Entity testEntity;
 
 		World testWorld;
+
+private:
+	void addButton(const std::string text, std::function<void()> function, std::string textureName = "button1")
+	{
+		auto newButton = gui::make_button();
+
+		newButton->setTexture(ResourceHolder::get().textures.acquire(textureName));
+		newButton->setText(text);
+		newButton->setFunction(function);
+
+		testMenu.addWidget(std::move(newButton));
+	}
 };
 
 #endif // STATEPLAYING_H_INCLUDED
